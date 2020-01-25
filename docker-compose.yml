@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  frontend:
+    build:
+      .
+    command:
+      npm run serve
+    volumes:
+    - ./pa:/pa
+    ports:
+    - "8080:8080"
