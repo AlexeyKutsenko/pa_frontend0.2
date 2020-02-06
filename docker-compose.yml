@@ -7,7 +7,5 @@ services:
       .
     command:
       npm run serve
-    volumes:
-    - ./pa:/pa
     ports:
     - "8080:8080"
