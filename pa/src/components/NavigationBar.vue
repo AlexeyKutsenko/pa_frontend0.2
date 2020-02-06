@@ -5,8 +5,11 @@
                 <b-nav-item to="/">
                     Home
                 </b-nav-item>
-                <b-nav-item to="/fin">
-                    Fin
+                <b-nav-item to="/accounts">
+                    Accounts
+                </b-nav-item>
+                <b-nav-item to="/index">
+                    Index
                 </b-nav-item>
             </b-navbar-nav>
         </b-navbar>
@@ -15,7 +18,7 @@
 
 <script>
     export default {
-        name: "HomePage"
+        name: "NavigationBar"
     }
 </script>
 

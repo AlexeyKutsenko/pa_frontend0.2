@@ -1,11 +1,13 @@
 import VueRouter from "vue-router";
-import FinDashboard from "../components/FinDashboard";
+import AccountsList from "../components/AccountsList";
+import Index from "../components/Index";
 
 
 const index = new VueRouter({
     mode: "history",
     routes: [
-        {path: "/fin", component: FinDashboard}
+        {path: "/accounts", component: AccountsList},
+        {path: "/index", component: Index}
     ]
 });
 
