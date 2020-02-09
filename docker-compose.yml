@@ -9,3 +9,5 @@ services:
       npm run serve
     ports:
     - "8080:8080"
+    volumes:
+    - ./pa/src:/pa/src

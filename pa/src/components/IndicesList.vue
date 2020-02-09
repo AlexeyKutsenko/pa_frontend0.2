@@ -8,26 +8,22 @@
     import Grid from "./Grid";
 
     export default {
-        name: "AccountsList",
+        name: "IndicesList",
         components: {Grid},
         data: function () {
             return {
-                url: '/accounts/',
+                url: '/indices/',
                 fields: [
                     {
-                        key: 'name',
-                        sortable: true
+                        key: 'data_source_url',
+                        sortable: true,
                     },
                     {
-                        key: 'currency',
+                        key: 'updated',
                         sortable: true
                     },
                     {
                         key: 'created',
-                        sortable: true
-                    },
-                    {
-                        key: 'updated',
                         sortable: true,
                     },
                     {

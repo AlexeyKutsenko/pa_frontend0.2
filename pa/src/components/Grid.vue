@@ -1,17 +1,16 @@
 <template>
-    <div>
+    <div class="container-fluid">
         <div v-if="items" :class="'row'">
             <b-table striped
                      hover
                      :items="items"
-                     :fields="fields"
+                     :fields="displayedFields"
                      :class="'text-center'"
                      @sort-changed="sortingChanged"
             >
                 <template v-slot:cell(action)="data">
-<!--                    TODO Make Account editable-->
-                    <b-button>
-                        Edit
+                    <b-button :to="{path: $route.path.concat('/', data.item.id)}">
+                        View
                     </b-button>
                 </template>
             </b-table>
@@ -34,24 +33,44 @@
 
     export default {
         name: "Grid",
-        props: {API_URL: {type: URL, required: true}, customFields: {type: Array, required: true}},
+        props: {
+            API_URL: {type: String, required: true},
+            displayedFields: {type: Array, required: true},
+            list: {type: Boolean, default: true},
+            params : {type: Object}
+        },
         data: function () {
             return {
                 items: undefined,
-                fields: this.customFields,
                 next: undefined,
                 previous: undefined,
-                url: this.API_URL,
             }
         },
         methods: {
             getItems: function () {
+                // eslint-disable-next-line no-console
+                console.log(this.params);
                 BASE
-                    .get(this.url.href)
+                    .get(this.API_URL, {
+                        params: this.params
+                    })
                     .then(response => {
-                        this.items = response.data.results;
-                        this.next = response.data.next ? new URL(response.data.next) : null;
-                        this.previous = response.data.previous ? new URL(response.data.previous) : null;
+                        // TODO: make normal cache
+                        // TODO: make less specific (response.data.results) (response.data.tickers)
+
+                        if (this.list) {
+                            let cachedData = {};
+                            response.data.results.forEach(element => {
+                                cachedData[element.id] = element
+                            });
+                            localStorage.setItem('indices', JSON.stringify(cachedData));
+
+                            this.items = response.data.results;
+                            this.next = response.data.next ? new URL(response.data.next) : null;
+                            this.previous = response.data.previous ? new URL(response.data.previous) : null;
+                        } else {
+                            this.items = response.data;
+                        }
                     })
                     .catch(error => {
                         // TODO: handle error
@@ -74,6 +93,11 @@
         mounted: function () {
             this.getItems();
         },
+        watch: {
+            params : function () {
+                this.getItems()
+            }
+        }
     }
 </script>
 

@@ -8,7 +8,7 @@
                 <b-nav-item to="/accounts">
                     Accounts
                 </b-nav-item>
-                <b-nav-item to="/index">
+                <b-nav-item to="/indices">
                     Index
                 </b-nav-item>
             </b-navbar-nav>
