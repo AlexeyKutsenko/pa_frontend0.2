@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Grid v-bind:API_URL="url" v-bind:displayedFields="fields"></Grid>
+        <Grid v-bind:API_URL="url" v-bind:displayedFields="fields" entity-name="Index"></Grid>
     </div>
 </template>
 

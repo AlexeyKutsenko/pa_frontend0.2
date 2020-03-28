@@ -1,6 +1,10 @@
 <template>
     <div class="container-fluid">
-        <div v-if="items" :class="'row'">
+        <CreateButton v-bind:API_URL="API_URL"
+                      v-bind:entityName="entityName"
+                      v-on:entityCreated="getItems"
+        ></CreateButton>
+        <div v-if="items" class="row">
             <b-table striped
                      hover
                      :items="items"
@@ -17,10 +21,12 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <b-button v-if="previous" :class="'float-right'" v-on:click="pageChanged(previous.searchParams)">
+                <b-button v-if="previous" :class="'float-right'"
+                          v-on:click="pageChanged(previous.searchParams)">
                     Previous
                 </b-button>
-                <b-button v-if="next" :class="'float-right'" v-on:click="pageChanged(next.searchParams)">
+                <b-button v-if="next" :class="'float-right'"
+                          v-on:click="pageChanged(next.searchParams)">
                     Next
                 </b-button>
             </div>
@@ -30,26 +36,27 @@
 
 <script>
     import {BASE} from "../vue-axios/axios-conf";
+    import CreateButton from "./CreateButton";
 
     export default {
         name: "Grid",
+        components: {CreateButton},
         props: {
             API_URL: {type: String, required: true},
+            entityName: {type: String, required: true},
             displayedFields: {type: Array, required: true},
             list: {type: Boolean, default: true},
-            params : {type: Object}
         },
         data: function () {
             return {
                 items: undefined,
                 next: undefined,
                 previous: undefined,
+                params: new URLSearchParams()
             }
         },
         methods: {
             getItems: function () {
-                // eslint-disable-next-line no-console
-                console.log(this.params);
                 BASE
                     .get(this.API_URL, {
                         params: this.params
@@ -78,14 +85,14 @@
                     })
             },
             sortingChanged: function (ctx) {
-                this.url.searchParams.set('ordering', ctx.sortDesc ? '-' + ctx.sortBy : ctx.sortBy);
+                this.params.set('ordering', ctx.sortDesc ? '-' + ctx.sortBy : ctx.sortBy);
                 this.getItems()
             },
             pageChanged: function (params) {
                 if (params.has('page')) {
-                    this.url.searchParams.set('page', params.get('page'));
+                    this.params.set('page', params.get('page'));
                 } else {
-                    this.url.searchParams.delete('page');
+                    this.params.delete('page');
                 }
                 this.getItems()
             }
@@ -94,7 +101,7 @@
             this.getItems();
         },
         watch: {
-            params : function () {
+            params: function () {
                 this.getItems()
             }
         }
