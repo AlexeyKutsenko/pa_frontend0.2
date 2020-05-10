@@ -1,33 +1,36 @@
 <template>
     <div>
-        <Grid v-bind:API_URL="url" v-bind:displayedFields="fields" entity-name="Account"></Grid>
+        <Grid v-bind:API_URL="url" v-bind:displayedFields="fields" entityName="Goal"></Grid>
     </div>
 </template>
 
 <script>
     import Grid from "./Grid";
-
     export default {
-        name: "AccountsList",
+        name: "GoalsList",
         components: {Grid},
-        data: function () {
+        data: function() {
             return {
-                url: '/accounts/',
+                url: '/goals/',
                 fields: [
                     {
                         key: 'name',
-                        sortable: true
+                        sortable: true,
                     },
                     {
-                        key: 'currency',
-                        sortable: true
+                        key: 'coefficient',
+                        sortable: true,
                     },
                     {
-                        key: 'created',
-                        sortable: true
+                        key: 'current_money_amount',
+                        sortable: true,
                     },
                     {
-                        key: 'updated',
+                        key: 'target_money_amount',
+                        sortable: true,
+                    },
+                    {
+                        key: 'level',
                         sortable: true,
                     },
                     {
@@ -36,7 +39,7 @@
                     }
                 ]
             }
-        },
+        }
     }
 </script>
 
