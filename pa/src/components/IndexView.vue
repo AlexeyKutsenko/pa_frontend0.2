@@ -50,7 +50,7 @@
                             <b-button v-on:click="approveTicker(data.item)">
                                 <b-icon-check></b-icon-check>
                             </b-button>
-                            <b-button v-on:click="skipTicker(data.item.name)">
+                            <b-button v-on:click="skipTicker(data.item.symbol)">
                                 <b-icon-x></b-icon-x>
                             </b-button>
                         </b-button-group>
@@ -84,7 +84,7 @@
                     solid: true
                 },
                 fields: [
-                    {key: 'name', sortable: true,},
+                    {key: 'symbol', sortable: true,},
                     {key: 'weight', sortable: true,},
                     {key: 'country', sortable: true,},
                     {key: 'sector', sortable: true,},
