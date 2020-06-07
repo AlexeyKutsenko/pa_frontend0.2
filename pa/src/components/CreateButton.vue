@@ -48,8 +48,7 @@
                         }
                     })
                     .catch(errorResponse => {
-                        this.$bvToast.toast(`${errorResponse}`,
-                            this.errorMsgConfig)
+                        this.$bvToast.toast(`${errorResponse}`, this.errorMsgConfig)
                     })
 
             },
