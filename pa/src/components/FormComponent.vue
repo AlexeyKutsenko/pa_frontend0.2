@@ -42,7 +42,6 @@
     </div>
 </template>
 <script>
-    /* eslint-disable no-console */
     import {Form} from '../utils/form'
 
     export default {
@@ -61,10 +60,6 @@
             },
             onSubmit: function (event) {
                 this.event = event;
-                alert(event);
-                for (const field in this.form) {
-                    console.log(field)
-                }
             },
         },
         created() {

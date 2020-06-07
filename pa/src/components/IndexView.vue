@@ -64,7 +64,6 @@
 
 <script>
 
-    import {BASE} from "../vue-axios/axios-conf";
 
     export default {
         name: "IndexView",
@@ -111,12 +110,15 @@
                 return this.sectors
                     .filter(sector => !sector.state)
                     .map(sector => sector.text)
-            }
+            },
+            fin_api: function () {
+                return this.$store.getters.fin_api
+            },
         },
         methods: {
             adjustIndex: function () {
 
-                BASE.get(this.source_url, {
+                this.fin_api.get(this.source_url, {
                     params: {
                         'money': this.money,
                         'skip-country': this.skipped_countries,
@@ -126,7 +128,7 @@
                     },
                 }).then(response => {
                     response.data.tickers.forEach(ticker => {
-                        if (this.approved_tickers.has(ticker.name)) {
+                        if (this.approved_tickers.has(ticker.symbol)) {
                             ticker._rowVariant = "success"
                         }
                     })
@@ -140,12 +142,12 @@
                 })
             },
             approveTicker: function (ticker) {
-                this.approved_tickers.add(ticker.name);
+                this.approved_tickers.add(ticker.symbol);
                 ticker._rowVariant = "success";
                 this.$refs['tickers-table'].refresh();
             },
             getCalculationOptions: function () {
-                BASE.options(this.source_url).then(response => {
+                this.fin_api.options(this.source_url).then(response => {
                     response.data.query_params.countries.forEach(element => {
                         this.countries.push({text: element.country, state: true})
                     });
