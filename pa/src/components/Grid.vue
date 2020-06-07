@@ -66,13 +66,7 @@
                         params: this.params
                     })
                     .then(response => {
-                        // TODO: make normal cache
 
-                        let cachedData = {};
-                        response.data.results.forEach(element => {
-                            cachedData[element.id] = element
-                        });
-                        localStorage.setItem('entities', JSON.stringify(cachedData));
 
                         this.items = response.data.results;
                         this.next = response.data.next ? new URL(response.data.next) : null;

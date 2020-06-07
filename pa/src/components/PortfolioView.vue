@@ -54,12 +54,12 @@
                         },
                     },
                 },
-                source_url: `/portfolios/${this.$route.params.id}`,
                 portfolio: {
                     accounts: undefined,
                     tickers: undefined,
                     name: undefined,
-                }
+                },
+                source_url: `/portfolios/${this.$route.params.id}`,
             }
         },
         methods: {
@@ -85,7 +85,7 @@
                 };
                 let ctx = document.getElementById('companiesBreakdownChart').getContext('2d');
 
-                let groupedCompanies = this.groupBy(this.portfolio.tickers, 'sector') // eslint-disable-line no-unused-vars
+                let groupedCompanies = this.groupBy(this.portfolio.tickers, 'sector')
                 this.sectorsBreakdown.forEach(sector => {
                     let sectorName = sector.ticker__sector;
                     groupedCompanies[sectorName].forEach(ticker => {
