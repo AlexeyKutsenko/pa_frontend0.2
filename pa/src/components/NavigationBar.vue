@@ -5,9 +5,6 @@
                 <b-nav-item to="/">
                     Home
                 </b-nav-item>
-                <b-nav-item to="/accounts">
-                    Accounts
-                </b-nav-item>
                 <b-nav-item to="/indices">
                     Index
                 </b-nav-item>

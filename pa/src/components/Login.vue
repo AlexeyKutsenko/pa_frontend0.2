@@ -13,7 +13,7 @@
                         Login
                     </h3>
                     <div>
-                        <b-form @submit="onSubmit">
+                        <b-form @submit.prevent="onSubmit">
                             <label class="sr-only" for="inline-form-input-username">Username</label>
                             <b-input-group class="mb-2 mr-sm-2 mb-sm-0">
                                 <b-input-group-prepend>
@@ -50,7 +50,7 @@
 
 
     export default {
-        name: "Login.vue",
+        name: "Login",
         data() {
             return {
                 errorMsgConfig: {
@@ -62,9 +62,7 @@
             }
         },
         methods: {
-            onSubmit: function (event) {
-                event.preventDefault()
-
+            onSubmit: function () {
                 if (this.form.password.length > 0) {
                     this.$store.dispatch('login', {
                         'username': this.form.username,

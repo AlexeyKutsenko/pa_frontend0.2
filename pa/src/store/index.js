@@ -8,7 +8,7 @@ function save_auth_info(username, token, commit) {
 
     localStorage.setItem('username', username)
     localStorage.setItem('token', token)
-    Vue.prototype.$http.defaults.headers.common['Authorization'] = 'Token' + token
+    Vue.prototype.$http.defaults.headers.common['Authorization'] = 'Token ' + token
 
     commit('auth_success', {username, token})
 }

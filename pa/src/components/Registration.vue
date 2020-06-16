@@ -12,7 +12,7 @@
                     </h3>
 
                     <div>
-                        <b-form @submit="onSubmit">
+                        <b-form @submit.prevent="onSubmit">
                             <label class="sr-only" for="inline-form-input-username">Username</label>
                             <b-input-group class="mb-2 mr-sm-2 mb-sm-0">
                                 <b-input-group-prepend>
@@ -54,7 +54,9 @@
                                          v-model="form.repeatPassword"></b-input>
                             </b-input-group>
 
-                            <b-button type="submit" class="mt-3" variant="primary">Login</b-button>
+                            <b-button type="submit" class="mt-3" variant="primary">
+                                Register
+                            </b-button>
                         </b-form>
                     </div>
                 </b-card>
@@ -83,9 +85,7 @@
             }
         },
         methods: {
-            onSubmit(event) {
-                event.preventDefault()
-
+            onSubmit() {
                 if (this.form.password.length > 0 && this.form.repeatPassword.length > 0) {
                     this.$store.dispatch('registration', {
                         username: this.form.username,

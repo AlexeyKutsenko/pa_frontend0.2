@@ -1,5 +1,4 @@
 import VueRouter from "vue-router";
-import AccountsList from "../components/AccountsList";
 import IndicesList from "../components/IndicesList"
 import IndexView from "../components/IndexView"
 import GoalsList from "../components/GoalsList";
@@ -16,7 +15,6 @@ const router = new VueRouter({
         {path: "/", name: "home", component: HomePage,},
         {path: "/login", name: 'login', component: Login, meta: {guest: true}},
         {path: "/registration", name: "registration", component: Registration, meta: {guest: true}},
-        {path: "/accounts", component: AccountsList, meta: {requiresAuth: true}},
         {path: "/indices", component: IndicesList, meta: {requiresAuth: true}},
         {path: "/indices/:id", component: IndexView, meta: {requiresAuth: true}},
         {path: "/goals", component: GoalsList, meta: {requiresAuth: true}},
