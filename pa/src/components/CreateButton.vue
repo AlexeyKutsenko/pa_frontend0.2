@@ -56,7 +56,7 @@
                                 }
                             }
 
-                            for (const field in creationData) {
+                            for (let field of Object.keys(creationData)) {
                                 if (creationData.hasOwnProperty(field) &&
                                     !creationData[field]['read_only']) {
                                     this.fieldsInfo[field] = creationData[field];
@@ -79,7 +79,7 @@
                     let creationData = {};
                     let paramsQuery = {};
 
-                    for (const field in form.fields) {
+                    for (let field of Object.keys(form.fields)) {
                         if (form.fields.hasOwnProperty(field)) {
                             if (form.fields[field]['query_param']) {
                                 paramsQuery[field] = form.fields[field].data;

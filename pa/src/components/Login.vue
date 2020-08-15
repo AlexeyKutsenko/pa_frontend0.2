@@ -62,16 +62,22 @@
             }
         },
         methods: {
-            onSubmit: function () {
+            onSubmit: async function () {
                 if (this.form.password.length > 0) {
-                    this.$store.dispatch('login', {
-                        'username': this.form.username,
-                        'password': this.form.password,
-                    })
-                        .then(() => this.$router.push({name: 'home'}))
-                        .catch((errorResponse) => {
-                            this.$bvToast.toast(`${errorResponse}`, this.errorMsgConfig)
+                    try {
+                        let result = await this.$store.dispatch('login', {
+                            'username': this.form.username,
+                            'password': this.form.password,
                         })
+                        if (result.status === 200) {
+                            await this.$router.push({name: 'home'})
+                        }
+                    } catch (errorResponse) {
+                        this.$bvToast.toast(
+                            `${errorResponse.response.data["non_field_errors"]}`,
+                            this.errorMsgConfig
+                        )
+                    }
                 }
             },
         },
