@@ -69,10 +69,14 @@
 </template>
 
 <script>
-    import {BASE} from "../vue-axios/axios-conf";
 
     export default {
         name: "GoalView",
+        computed: {
+            fin_api: function () {
+                return this.$store.getters.fin_api
+            },
+        },
         data: function () {
             return {
                 source_url: `/goals/${this.$route.params.id}`,
@@ -86,7 +90,7 @@
             }
         },
         mounted() {
-            BASE
+            this.fin_api
                 .get(this.source_url)
                 .then(response => {
                     this.goal.name = response.data.name;

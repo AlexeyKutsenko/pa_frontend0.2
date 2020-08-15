@@ -35,7 +35,6 @@
 </template>
 
 <script>
-    import {BASE} from "../vue-axios/axios-conf";
     import CreateButton from "./CreateButton";
 
     export default {
@@ -47,6 +46,11 @@
             displayedFields: {type: Array, required: true},
             list: {type: Boolean, default: true},
         },
+        computed: {
+            fin_api: function () {
+                return this.$store.getters.fin_api
+            },
+        },
         data: function () {
             return {
                 items: undefined,
@@ -57,27 +61,16 @@
         },
         methods: {
             getItems: function () {
-                BASE
+                this.fin_api
                     .get(this.API_URL, {
                         params: this.params
                     })
                     .then(response => {
-                        // TODO: make normal cache
-                        // TODO: make less specific (response.data.results) (response.data.tickers)
 
-                        if (this.list) {
-                            let cachedData = {};
-                            response.data.results.forEach(element => {
-                                cachedData[element.id] = element
-                            });
-                            localStorage.setItem('indices', JSON.stringify(cachedData));
 
-                            this.items = response.data.results;
-                            this.next = response.data.next ? new URL(response.data.next) : null;
-                            this.previous = response.data.previous ? new URL(response.data.previous) : null;
-                        } else {
-                            this.items = response.data;
-                        }
+                        this.items = response.data.results;
+                        this.next = response.data.next ? new URL(response.data.next) : null;
+                        this.previous = response.data.previous ? new URL(response.data.previous) : null;
                     })
                     .catch(error => {
                         // TODO: handle error

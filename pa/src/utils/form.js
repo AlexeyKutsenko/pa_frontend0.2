@@ -16,6 +16,7 @@ class FormField {
         this.valid = null;
         this.validators = [];
         this.errors = [];
+        this.query_param = fieldInfo['query_param'] || false;
 
         if (fieldInfo['required']) {
             this.validators.push(new RequiredValidator())
@@ -84,7 +85,7 @@ class ChoiceFormField extends FormField {
         fieldInfo['choices'].forEach(choice => {
             this.choices.push({
                 'value': choice['value'],
-                'text': choice['display_name']
+                'text': choice['display_name'] ? choice['display_name']: choice['value']
             })
         });
 

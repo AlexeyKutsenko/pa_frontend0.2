@@ -12,7 +12,6 @@
 </template>
 
 <script>
-    import {BASE} from "../vue-axios/axios-conf";
     import FormComponent from "./FormComponent";
 
     export default {
@@ -21,6 +20,11 @@
         props: {
             API_URL: {type: String, required: true},
             entityName: {type: String, required: true},
+        },
+        computed: {
+            fin_api: function () {
+                return this.$store.getters.fin_api
+            },
         },
         data: function () {
             return {
@@ -34,12 +38,25 @@
         },
         methods: {
             getCreationOptions: function () {
-                BASE
+                this.fin_api
                     .options(this.API_URL)
                     .then(response => {
                         if (response.data) {
                             let creationData = response.data['actions']['POST'];
-                            for (const field in creationData) {
+
+                            if (creationData['query_params']) {
+                                let query_params = creationData['query_params'];
+                                delete creationData['query_params'];
+                                for (const query_param in query_params) {
+                                    if (query_params.hasOwnProperty(query_param) &&
+                                        !query_params[query_param]['read_only']) {
+                                        this.fieldsInfo[query_param] = query_params[query_param];
+                                        this.fieldsInfo[query_param]['query_param'] = true;
+                                    }
+                                }
+                            }
+
+                            for (let field of Object.keys(creationData)) {
                                 if (creationData.hasOwnProperty(field) &&
                                     !creationData[field]['read_only']) {
                                     this.fieldsInfo[field] = creationData[field];
@@ -60,15 +77,20 @@
 
                 if (form.valid) {
                     let creationData = {};
+                    let paramsQuery = {};
 
-                    for (const field in form.fields) {
+                    for (let field of Object.keys(form.fields)) {
                         if (form.fields.hasOwnProperty(field)) {
-                            creationData[field] = form.fields[field].data
+                            if (form.fields[field]['query_param']) {
+                                paramsQuery[field] = form.fields[field].data;
+                            } else {
+                                creationData[field] = form.fields[field].data
+                            }
                         }
                     }
 
-                    BASE
-                        .post(this.API_URL, creationData)
+                    this.fin_api
+                        .post(this.API_URL, creationData, {params: paramsQuery})
                         .then(response => {
                             if (response.status === 201) {
                                 this.$nextTick(() => {
@@ -86,17 +108,22 @@
                             }
                         })
                         .catch(errorResponse => {
-                            if (errorResponse["message"] && errorResponse.status !== 400) {
+                            if (errorResponse["message"] && errorResponse.response.status !== 400) {
                                 this.$bvToast.toast(`${errorResponse["message"]}`,
                                     this.errorMsgConfig)
                             } else {
                                 for (const errorField in errorResponse.response.data) {
-                                    if (errorResponse.response.data.hasOwnProperty(errorField)) {
+                                    if (errorResponse.response.data.hasOwnProperty(errorField) &&
+                                        form.fields[errorField]) {
+
                                         let fieldName = form.fields[errorField].label;
                                         let errorMsg = errorResponse.response.data[errorField];
 
-                                        this.$bvToast.toast(`${fieldName}: ${errorMsg}`,
-                                            this.errorMsgConfig)
+                                        this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
+                                    } else {
+                                        let fieldName = 'detail';
+                                        let errorMsg = errorResponse.response.data[fieldName]
+                                        this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
                                     }
                                 }
                             }
@@ -104,7 +131,7 @@
                             this.$nextTick(() => {
                                 this.$bvModal.hide('create' + this.entityName)
                             });
-                        })
+                        });
                 }
             }
         },
