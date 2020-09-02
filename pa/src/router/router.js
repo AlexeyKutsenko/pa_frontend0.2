@@ -19,8 +19,8 @@ const router = new VueRouter({
         {path: "/indices/:id", component: IndexView, meta: {requiresAuth: true}},
         {path: "/goals", component: GoalsList, meta: {requiresAuth: true}},
         {path: "/goals/:id", component: GoalView, meta: {requiresAuth: true}},
-        {path: "/portfolios", component: PortfoliosList, meta: { requiresAuth: true }},
-        {path: "/portfolios/:id", component: PortfolioView, meta: { requiresAuth: true }}
+        {path: "/portfolios", component: PortfoliosList, meta: {requiresAuth: true}},
+        {path: "/portfolios/:id", component: PortfolioView, meta: {requiresAuth: true}}
     ]
 });
 

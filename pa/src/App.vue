@@ -1,18 +1,17 @@
 <template>
-    <div id="app">
-        <NavigationBar></NavigationBar>
-        <router-view></router-view>
-
-    </div>
+  <div id="app">
+    <NavigationBar />
+    <router-view />
+  </div>
 </template>
 
 <script>
-    import NavigationBar from "./components/NavigationBar";
+import NavigationBar from "./components/NavigationBar";
 
-    export default {
-        name: 'app',
-        components: {
-            NavigationBar: NavigationBar
-        }
+export default {
+    name: 'App',
+    components: {
+        NavigationBar: NavigationBar
     }
+}
 </script>

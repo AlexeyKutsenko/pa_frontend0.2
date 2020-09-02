@@ -50,7 +50,7 @@ export class RequiredValidator extends Validator {
 export class TextValidator extends RequiredValidator {
     validate(data) {
         return super.validate(data) === true &&
-            data.trim() !== '' ? true : 'Field doesn\'t contain any characters'
+        data.trim() !== '' ? true : 'Field doesn\'t contain any characters'
     }
 }
 

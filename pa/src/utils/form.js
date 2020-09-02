@@ -85,7 +85,7 @@ class ChoiceFormField extends FormField {
         fieldInfo['choices'].forEach(choice => {
             this.choices.push({
                 'value': choice['value'],
-                'text': choice['display_name'] ? choice['display_name']: choice['value']
+                'text': choice['display_name'] ? choice['display_name'] : choice['value']
             })
         });
 

@@ -1,35 +1,39 @@
 <template>
-    <div>
-        <Grid v-bind:API_URL="url" v-bind:displayedFields="fields" entityName="Portfolio"></Grid>
-    </div>
+  <div>
+    <Grid
+      entity-name="Portfolio"
+      :a-p-i-u-r-l="url"
+      :displayed-fields="fields"
+    />
+  </div>
 </template>
 
 <script>
-    import Grid from "./Grid";
+import Grid from "./List";
 
-    export default {
-        name: "PortfoliosList",
-        components: {Grid},
-        data: function () {
-            return {
-                url: '/portfolios/',
-                fields: [
-                    {
-                        key: 'id',
-                        sortable: true,
-                    },
-                    {
-                        key: 'name',
-                        sortable: true
-                    },
-                    {
-                        key: 'action',
-                        label: 'Actions'
-                    }
-                ]
-            }
+export default {
+  name: "PortfoliosList",
+  components: {Grid},
+  data: function () {
+    return {
+      url: '/portfolios/',
+      fields: [
+        {
+          key: 'id',
+          sortable: true,
+        },
+        {
+          key: 'name',
+          sortable: true
+        },
+        {
+          key: 'action',
+          label: 'Actions'
         }
+      ]
     }
+  }
+}
 </script>
 
 <style scoped>
