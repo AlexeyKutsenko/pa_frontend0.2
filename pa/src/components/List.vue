@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <CreateButton
-      :a-p-i-u-r-l="API_URL"
+      :api-url="apiUrl"
       :entity-name="entityName"
       @entityCreated="getItems"
     />
@@ -52,7 +52,7 @@ export default {
     name: "Grid",
     components: {CreateButton},
     props: {
-        aPIURL: {type: String, required: true},
+        apiUrl: {type: String, required: true},
         entityName: {type: String, required: true},
         displayedFields: {type: Array, required: true},
         list: {type: Boolean, default: true},
@@ -81,7 +81,7 @@ export default {
     methods: {
         getItems: function () {
             this.fin_api
-                .get(this.API_URL, {
+                .get(this.apiUrl, {
                     params: this.params
                 })
                 .then(response => {

@@ -2,7 +2,7 @@
   <div>
     <Grid
       entity-name="Goal"
-      :a-p-i-u-r-l="url"
+      :api-url="url"
       :displayed-fields="fields"
     />
   </div>

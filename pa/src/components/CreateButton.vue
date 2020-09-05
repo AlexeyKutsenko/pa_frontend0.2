@@ -24,7 +24,7 @@ export default {
     name: "CreateButton",
     components: {FormComponent},
     props: {
-        aPIURL: {type: String, required: true},
+        apiUrl: {type: String, required: true},
         entityName: {type: String, required: true},
     },
     data: function () {
@@ -48,7 +48,7 @@ export default {
     methods: {
         getCreationOptions: function () {
             this.fin_api
-                .options(this.API_URL)
+                .options(this.apiUrl)
                 .then(response => {
                     if (response.data) {
                         let creationData = response.data['actions']['POST'];
@@ -99,7 +99,7 @@ export default {
                 }
 
                 this.fin_api
-                    .post(this.API_URL, creationData, {params: paramsQuery})
+                    .post(this.apiUrl, creationData, {params: paramsQuery})
                     .then(response => {
                         if (response.status === 201) {
                             this.$nextTick(() => {
