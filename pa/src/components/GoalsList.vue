@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Grid
+    <List
       entity-name="Goal"
       :api-url="url"
       :displayed-fields="fields"
@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import Grid from "./List";
+import List from "./List";
 
 export default {
     name: "GoalsList",
-    components: {Grid},
+    components: {List},
     data: function () {
         return {
             url: '/goals/',

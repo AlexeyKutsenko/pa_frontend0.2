@@ -18,14 +18,13 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-table
-          class="text-center"
-          :fields="displayedFields"
-          :items="portfolio.tickers"
-          hover
-          striped
-          small
-        />
+        <b-list-group>
+          <Ticker
+            v-for="ticker in portfolio.tickers"
+            :key="ticker.symbol"
+            :ticker="ticker"
+          />
+        </b-list-group>
       </b-col>
     </b-row>
     <b-row>
@@ -72,7 +71,7 @@
           small
         >
           <template v-slot:cell(action)="data">
-            <b-button-group v-if="data.item.name !== 'Summary'">
+            <b-button-group v-if="data.item.company_name !== 'Summary'">
               <b-button @click="approveTicker(data.item)">
                 <b-icon-check />
               </b-button>
@@ -101,9 +100,11 @@
 <script>
 import Chart from 'chart.js';
 import ColorHash from 'color-hash';
+import Ticker from "@/components/Ticker";
 
 export default {
   name: "PortfolioView",
+  components: {Ticker},
   data: function () {
     return {
       approved_tickers: new Set(),
@@ -163,10 +164,6 @@ export default {
         this.portfolio.accounts = response.data.accounts;
         this.portfolio.id = response.data.id;
         this.portfolio.tickers = response.data.tickers;
-        this.portfolio.tickers.push({
-          'company_name': 'Summary',
-          'cost': response.data.total_tickers
-        })
         this.portfolio.name = response.data.name;
         this.industriesBreakdown = response.data.industries_breakdown;
         this.sectorsBreakdown = response.data.sectors_breakdown;
@@ -292,6 +289,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
