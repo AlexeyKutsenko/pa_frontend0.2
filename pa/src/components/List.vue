@@ -49,7 +49,7 @@
 import CreateButton from "./CreateButton";
 
 export default {
-    name: "Grid",
+    name: "List",
     components: {CreateButton},
     props: {
         apiUrl: {type: String, required: true},
@@ -85,7 +85,6 @@ export default {
                     params: this.params
                 })
                 .then(response => {
-
 
                     this.items = response.data.results;
                     this.next = response.data.next ? new URL(response.data.next) : null;
