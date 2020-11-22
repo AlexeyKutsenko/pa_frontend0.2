@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     fin_api: function () {
-      return this.$store.getters.fin_api
+      return this.$store.getters.finApi
     },
   },
   created: function () {
