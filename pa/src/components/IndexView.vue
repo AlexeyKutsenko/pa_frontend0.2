@@ -122,7 +122,7 @@ export default {
                 .map(sector => sector.text)
         },
         fin_api: function () {
-            return this.$store.getters.fin_api
+            return this.$store.getters.finApi
         },
     },
     mounted() {

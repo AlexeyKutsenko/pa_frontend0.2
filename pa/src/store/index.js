@@ -93,7 +93,7 @@ const store = new Vuex.Store({
                 headers: headers
             })
         },
-        fin_api: state => {
+        finApi: state => {
             return axios.create({
                 baseURL: process.env.VUE_APP_FIN_API_URL,
                 headers: {
