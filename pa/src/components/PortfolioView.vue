@@ -287,12 +287,6 @@
   </b-container>
 </template>
 
-<style scoped>
-#portfolio-tickers-last-updated-date, #index-tickers-last-updated-date {
-  color: #0e2d49;
-  text-decoration: underline dashed;
-}
-</style>
 
 <script>
 import Chart from 'chart.js';
@@ -561,3 +555,9 @@ export default {
 }
 </script>
 
+<style scoped>
+#portfolio-tickers-last-updated-date, #index-tickers-last-updated-date {
+  color: #0e2d49;
+  text-decoration: underline dashed;
+}
+</style>
