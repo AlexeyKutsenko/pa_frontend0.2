@@ -302,7 +302,7 @@
 import Chart from 'chart.js';
 import ColorHash from 'color-hash';
 import Ticker from "@/components/Ticker";
-import PortfolioPolicyView from "@/components/PortfolioPolicyView";
+import PortfolioPolicyView from "@/components/Portfolio/PortfolioPolicyView";
 
 export default {
   name: "PortfolioView",
