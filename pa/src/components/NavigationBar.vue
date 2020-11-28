@@ -11,9 +11,6 @@
         <b-nav-item to="/indices">
           Index
         </b-nav-item>
-        <b-nav-item to="/goals">
-          Goals
-        </b-nav-item>
         <b-nav-item to="/portfolios">
           Portfolios
         </b-nav-item>

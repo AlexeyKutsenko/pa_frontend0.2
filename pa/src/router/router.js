@@ -1,13 +1,11 @@
 import VueRouter from "vue-router";
-import IndicesList from "../components/IndicesList"
-import IndexView from "../components/IndexView"
-import GoalsList from "../components/GoalsList";
-import GoalView from "../components/GoalView";
+import IndicesList from "../components/Index/IndicesList"
+import IndexView from "../components/Index/IndexView"
 import HomePage from "../components/HomePage";
-import Login from "../components/Login";
-import Registration from "../components/Registration";
-import PortfoliosList from "../components/PortfoliosList";
-import PortfolioView from "../components/PortfolioView";
+import Login from "../components/Auth/Login";
+import Registration from "../components/Auth/Registration";
+import PortfoliosList from "../components/Portfolio/PortfoliosList";
+import PortfolioView from "../components/Portfolio/PortfolioView";
 
 const router = new VueRouter({
     mode: "history",
@@ -17,8 +15,6 @@ const router = new VueRouter({
         {path: "/registration", name: "registration", component: Registration, meta: {guest: true}},
         {path: "/indices", component: IndicesList, meta: {requiresAuth: true}},
         {path: "/indices/:id", component: IndexView, meta: {requiresAuth: true}},
-        {path: "/goals", component: GoalsList, meta: {requiresAuth: true}},
-        {path: "/goals/:id", component: GoalView, meta: {requiresAuth: true}},
         {path: "/portfolios", component: PortfoliosList, meta: {requiresAuth: true}},
         {path: "/portfolios/:id", component: PortfolioView, meta: {requiresAuth: true}}
     ]

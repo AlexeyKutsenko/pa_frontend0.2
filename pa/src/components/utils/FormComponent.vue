@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import {Form} from '../utils/form'
+import {Form} from '../../utils/form'
 
 export default {
   name: 'FormComponent',

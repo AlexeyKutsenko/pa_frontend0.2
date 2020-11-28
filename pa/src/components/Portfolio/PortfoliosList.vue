@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import List from "./List";
+import List from "../utils/List";
 
 export default {
   name: "PortfoliosList",
