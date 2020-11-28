@@ -102,16 +102,26 @@
         </b-tooltip>
       </b-col>
     </b-row>
-    <!-- Tickers -->
     <b-row>
       <b-col>
-        <b-list-group>
-          <Ticker
-            v-for="ticker in portfolio.tickers"
-            :key="ticker.symbol"
-            :ticker="ticker"
-          />
-        </b-list-group>
+        <b-tabs>
+          <!-- Tickers -->
+          <b-tab title="Tickers">
+            <b-list-group>
+              <Ticker
+                v-for="ticker in portfolio.tickers"
+                :key="ticker.symbol"
+                :ticker="ticker"
+              />
+            </b-list-group>
+          </b-tab>
+          <b-tab title="Portfolio Policy">
+            <PortfolioPolicyView
+              :portfolio-id="portfolio.id"
+              :portfolio-policy="portfolioPolicy"
+            />
+          </b-tab>
+        </b-tabs>
       </b-col>
     </b-row>
     <!-- Adjust Form -->
@@ -292,10 +302,11 @@
 import Chart from 'chart.js';
 import ColorHash from 'color-hash';
 import Ticker from "@/components/Ticker";
+import PortfolioPolicyView from "@/components/PortfolioPolicyView";
 
 export default {
   name: "PortfolioView",
-  components: {Ticker},
+  components: {Ticker, PortfolioPolicyView},
   data: function () {
     return {
       actionDisplayedFields: undefined,
@@ -341,6 +352,7 @@ export default {
         name: undefined,
         adjusted_tickers: undefined,
       },
+      portfolioPolicy: undefined,
       selectableIndices: [],
       selectedIndex: undefined,
       skipped_tickers: [],
@@ -380,11 +392,12 @@ export default {
       .then((response) => {
         this.portfolio.accounts = response.data.accounts;
         this.portfolio.id = response.data.id;
+        this.portfolio.name = response.data.name;
         this.portfolio.status = response.data.status;
         this.portfolio.tickers = response.data.tickers;
         this.portfolio.tickersLastUpdated = new Date(response.data.tickers_last_updated);
         this.portfolio.tickersTimeDelta = new Date() - this.portfolio.tickersLastUpdated;
-        this.portfolio.name = response.data.name;
+        this.portfolioPolicy = response.data.portfolio_policy;
         this.industriesBreakdown = response.data.industries_breakdown;
         this.sectorsBreakdown = response.data.sectors_breakdown;
         this.totalTickers = response.data.total_tickers;
