@@ -237,9 +237,11 @@ export default {
           }
           this.adjustedTickers.push(ticker)
         })
+
+        let summaryCost = this.adjustedTickers.reduce((a, b) => a + b.cost, 0)
         this.adjustedTickers.push({
           'company_name': 'Summary',
-          'cost': response.data.summary_cost
+          'cost': summaryCost
         })
       })
     },
