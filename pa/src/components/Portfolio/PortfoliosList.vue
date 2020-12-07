@@ -3,6 +3,7 @@
     <List
       entity-name="Portfolio"
       :api-url="url"
+      :can-create="false"
       :displayed-fields="fields"
     />
   </div>
