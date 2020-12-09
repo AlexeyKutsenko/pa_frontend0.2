@@ -127,24 +127,35 @@
         striped
         small
       >
-        <template v-slot:cell(debt)="data">
+        <template #cell(company_name)="data">
+          {{ data.item.company_name }}<br>
+          <b-icon
+            v-if="data.item.shares_dilution > 0.5"
+            v-b-tooltip.hover
+            :title="`Shareholders have been diluted in the past year, with total shares outstanding growing by
+                     ${data.item.shares_dilution}%`"
+            icon="exclamation-triangle"
+            variant="warning"
+          />
+        </template>
+        <template #cell(debt)="data">
           <div v-if="data.item.debt">
             Debt to Equity: {{ data.item.debt.debt_to_equity }}%<br>
             Assets to Equity: {{ data.item.debt.assets_to_equity }}
           </div>
         </template>
-        <template v-slot:cell(annual_earnings_growth)="data">
+        <template #cell(annual_earnings_growth)="data">
           <div v-if="data.item.annual_earnings_growth">
             {{ data.item.annual_earnings_growth }}%
           </div>
         </template>
-        <template v-slot:cell(returns_ratios)="data">
+        <template #cell(returns_ratios)="data">
           <div v-if="data.item.returns_ratios">
             ROA: {{ data.item.returns_ratios.roa }}%<br>
             ROE: {{ data.item.returns_ratios.roe }}%
           </div>
         </template>
-        <template v-slot:cell(action)="data">
+        <template #cell(action)="data">
           <b-button-group v-if="data.item.company_name !== 'Summary'">
             <b-button @click="approveTicker(data.item)">
               <b-icon-check />
