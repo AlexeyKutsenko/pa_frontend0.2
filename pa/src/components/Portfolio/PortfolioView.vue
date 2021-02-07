@@ -185,14 +185,6 @@
   </b-container>
 </template>
 
-<style scoped>
-  table#indicators > tbody > tr > td:first-child {
-    text-align: left;
-  }
-  table#indicators > tbody > tr > td:last-child {
-    text-align: right;
-  }
-</style>
 
 <script>
 import PortfolioAdjusting from './PortfolioAdjusting'
@@ -200,23 +192,23 @@ import PortfolioBreakdowns from './PortfolioBreakdowns'
 import PortfolioPolicyView from './PortfolioPolicyView'
 
 export default {
-  name: "PortfolioView",
-  components: {PortfolioAdjusting, PortfolioBreakdowns, PortfolioPolicyView},
+  name: 'PortfolioView',
+  components: { PortfolioAdjusting, PortfolioBreakdowns, PortfolioPolicyView },
   data: function () {
     return {
       displayedFields: [
-        {key: 'company_name', sortable: false},
-        {key: 'symbol', sortable: false},
-        {key: 'country', sortable: false},
-        {key: 'sector', sortable: false},
-        {key: 'industry', sortable: false},
-        {key: 'debt', sortable: false},
-        {key: 'annual_earnings_growth', sortable: false},
-        {key: 'returns_ratios', sortable: false},
-        {key: 'pe', label: 'PE', sortable: false},
-        {key: 'amount', sortable: false},
-        {key: 'price', sortable: true},
-        {key: 'cost', sortable: true},
+        { key: 'company_name', sortable: false },
+        { key: 'symbol', sortable: false },
+        { key: 'country', sortable: false },
+        { key: 'sector', sortable: false },
+        { key: 'industry', sortable: false },
+        { key: 'debt', sortable: false },
+        { key: 'annual_earnings_growth', sortable: false },
+        { key: 'returns_ratios', sortable: false },
+        { key: 'pe', label: 'PE', sortable: false },
+        { key: 'amount', sortable: false },
+        { key: 'price', sortable: true },
+        { key: 'cost', sortable: true },
       ],
       indicatorsViewFields: [
         {
@@ -268,11 +260,11 @@ export default {
       },
       portfolioPolicy: undefined,
       portfolioViewFields: [
-        {key: 'symbol', label: 'Symbol'},
-        {key: 'company_name', label: 'Name'},
-        {key: 'country', label: 'Country', sortable: true},
-        {key: 'sector', label: 'Sector', sortable: true},
-        {key: 'industry', label: 'Industry', sortable: true},
+        { key: 'symbol', label: 'Symbol' },
+        { key: 'company_name', label: 'Name' },
+        { key: 'country', label: 'Country', sortable: true },
+        { key: 'sector', label: 'Sector', sortable: true },
+        { key: 'industry', label: 'Industry', sortable: true },
       ],
       sectorsBreakdown: undefined,
       selectedTicker: undefined,
@@ -282,76 +274,85 @@ export default {
   },
   computed: {
     isPortfolioUpdatable: function () {
-      let updatedMoreThanHourAgo = this.portfolio.tickersTimeDelta / (1000 * 60 * 60) > 1;
-      return this.portfolio.status !== this.updatingStatuses.updating && updatedMoreThanHourAgo;
+      let updatedMoreThanHourAgo = this.portfolio.tickersTimeDelta / (1000 * 60 * 60) > 1
+      return this.portfolio.status !== this.updatingStatuses.updating && updatedMoreThanHourAgo
     },
     finApi: function () {
       return this.$store.getters.finApi
     },
   },
-  created() {
+  created () {
     this.updatingStatuses = {
-      successfully_updated: "Successfully Updated",
-      updating: "Updating",
-      update_failed: "Update Failed"
+      successfully_updated: 'Successfully Updated',
+      updating: 'Updating',
+      update_failed: 'Update Failed'
     }
-    this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
+    this.portfolioUrl = `/portfolios/${this.$route.params.id}`
   },
   mounted: function () {
     this.finApi
       .get(this.portfolioUrl)
       .then((response) => {
-        this.portfolio.accounts = response.data.accounts;
-        this.portfolio.id = response.data.id;
-        this.portfolio.name = response.data.name;
-        this.portfolio.status = response.data.status;
-        this.portfolio.tickers = response.data.tickers;
-        this.portfolio.tickersLastUpdated = new Date(response.data.tickers_last_updated);
-        this.portfolio.tickersTimeDelta = new Date() - this.portfolio.tickersLastUpdated;
-        this.portfolioPolicy = response.data.portfolio_policy;
-        this.industriesBreakdown = response.data.industries_breakdown;
-        this.sectorsBreakdown = response.data.sectors_breakdown;
-        this.totalTickers = response.data.total_tickers;
+        this.portfolio.accounts = response.data.accounts
+        this.portfolio.id = response.data.id
+        this.portfolio.name = response.data.name
+        this.portfolio.status = response.data.status
+        this.portfolio.tickers = response.data.tickers
+        this.portfolio.tickersLastUpdated = new Date(response.data.tickers_last_updated)
+        this.portfolio.tickersTimeDelta = new Date() - this.portfolio.tickersLastUpdated
+        this.portfolioPolicy = response.data.portfolio_policy
+        this.industriesBreakdown = response.data.industries_breakdown
+        this.sectorsBreakdown = response.data.sectors_breakdown
+        this.totalTickers = response.data.total_tickers
       })
   },
   methods: {
     reloadPortfolioTickers: function () {
-      let reloadUrl = `${this.portfolioUrl}/tickers/`;
+      let reloadUrl = `${this.portfolioUrl}/tickers/`
       this.finApi.put(reloadUrl).then((response) => {
-        let responseStatuses = [200, 202];
+        let responseStatuses = [200, 202]
         if (responseStatuses.includes(response.status)) {
-          this.portfolio.status = this.updatingStatuses.updating;
-          this.portfolio.tickersLastUpdated = new Date();
-          this.portfolio.tickersTimeDelta = 0;
+          this.portfolio.status = this.updatingStatuses.updating
+          this.portfolio.tickersLastUpdated = new Date()
+          this.portfolio.tickersTimeDelta = 0
         }
       }).catch((response) => {
         if (response.status === 406) {
-          this.portfolio.status = this.updatingStatuses.updating;
-          this.portfolio.tickersLastUpdated = new Date();
-          this.portfolio.tickersTimeDelta = 0;
+          this.portfolio.status = this.updatingStatuses.updating
+          this.portfolio.tickersLastUpdated = new Date()
+          this.portfolio.tickersTimeDelta = 0
         }
       })
     },
     onRowSelected: function (ticker) {
       this.selectedTicker = ticker[0]
     },
-    getAttr: function(o, s) {
-      s = s.replace(/^\./, '');           // strip a leading dot
-      let a = s.split('.');
+    getAttr: function (o, s) {
+      s = s.replace(/^\./, '')           // strip a leading dot
+      let a = s.split('.')
       for (let i = 0, n = a.length; i < n; ++i) {
-        let k = a[i];
+        let k = a[i]
         if (o === null) {
           return null
         }
         if (k in o) {
-          o = o[k];
+          o = o[k]
         } else {
-          return;
+          return
         }
       }
-      return o;
+      return o
     }
   },
 }
 </script>
 
+<style scoped>
+table#indicators > tbody > tr > td:first-child {
+  text-align: left;
+}
+
+table#indicators > tbody > tr > td:last-child {
+  text-align: right;
+}
+</style>
