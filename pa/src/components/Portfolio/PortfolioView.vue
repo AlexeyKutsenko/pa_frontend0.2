@@ -108,11 +108,48 @@
           <!-- Tickers -->
           <b-tab title="Tickers">
             <b-list-group>
-              <Ticker
-                v-for="ticker in portfolio.tickers"
-                :key="ticker.symbol"
-                :ticker="ticker"
-              />
+              <b-container
+                class="pl-0"
+                fluid
+              >
+                <b-row class="text-center">
+                  <b-col
+                    cols="8"
+                  >
+                    <b-table
+                      bordered
+                      selectable
+                      :fields="portfolioViewFields"
+                      :items="portfolio.tickers"
+                      :select-mode="'single'"
+                      @row-selected="onRowSelected"
+                    />
+                  </b-col>
+                  <b-col
+                    class="border"
+                    cols="4"
+                  >
+                    <h3>Indicators</h3>
+                    <div v-if="selectedTicker">
+                      <b-table-simple id="indicators">
+                        <b-tbody>
+                          <b-tr
+                            v-for="field in indicatorsViewFields"
+                            :key="field.key"
+                          >
+                            <b-td>
+                              {{ field.label }}
+                            </b-td>
+                            <b-td>
+                              {{ getAttr(selectedTicker, field.key) }}
+                            </b-td>
+                          </b-tr>
+                        </b-tbody>
+                      </b-table-simple>
+                    </div>
+                  </b-col>
+                </b-row>
+              </b-container>
             </b-list-group>
           </b-tab>
           <b-tab
@@ -148,16 +185,23 @@
   </b-container>
 </template>
 
+<style scoped>
+  table#indicators > tbody > tr > td:first-child {
+    text-align: left;
+  }
+  table#indicators > tbody > tr > td:last-child {
+    text-align: right;
+  }
+</style>
 
 <script>
-import Ticker from "../Ticker";
-import PortfolioAdjusting from "./PortfolioAdjusting";
-import PortfolioBreakdowns from "./PortfolioBreakdowns";
-import PortfolioPolicyView from "./PortfolioPolicyView";
+import PortfolioAdjusting from './PortfolioAdjusting'
+import PortfolioBreakdowns from './PortfolioBreakdowns'
+import PortfolioPolicyView from './PortfolioPolicyView'
 
 export default {
   name: "PortfolioView",
-  components: {PortfolioAdjusting, PortfolioBreakdowns, PortfolioPolicyView, Ticker},
+  components: {PortfolioAdjusting, PortfolioBreakdowns, PortfolioPolicyView},
   data: function () {
     return {
       displayedFields: [
@@ -174,6 +218,44 @@ export default {
         {key: 'price', sortable: true},
         {key: 'cost', sortable: true},
       ],
+      indicatorsViewFields: [
+        {
+          key: 'amount',
+          label: 'Amount'
+        },
+        {
+          key: 'price',
+          label: 'Price'
+        },
+        {
+          key: 'cost',
+          label: 'Cost'
+        },
+        {
+          key: 'pe',
+          label: 'PE'
+        },
+        {
+          key: 'annual_earnings_growth',
+          label: 'Annual Earnings Growth'
+        },
+        {
+          key: 'returns_ratios.roa',
+          label: 'ROA'
+        },
+        {
+          key: 'returns_ratios.roe',
+          label: 'ROE'
+        },
+        {
+          key: 'debt.assets_to_equity',
+          label: 'Assets to Equity'
+        },
+        {
+          key: 'debt.debt_to_equity',
+          label: 'Debt to Equity'
+        }
+      ],
       industriesBreakdown: undefined,
       portfolio: {
         accounts: undefined,
@@ -185,7 +267,15 @@ export default {
         adjusted_tickers: undefined,
       },
       portfolioPolicy: undefined,
+      portfolioViewFields: [
+        {key: 'symbol', label: 'Symbol'},
+        {key: 'company_name', label: 'Name'},
+        {key: 'country', label: 'Country', sortable: true},
+        {key: 'sector', label: 'Sector', sortable: true},
+        {key: 'industry', label: 'Industry', sortable: true},
+      ],
       sectorsBreakdown: undefined,
+      selectedTicker: undefined,
       totalTickers: undefined,
       updatingStatuses: undefined
     }
@@ -241,8 +331,27 @@ export default {
           this.portfolio.tickersTimeDelta = 0;
         }
       })
+    },
+    onRowSelected: function (ticker) {
+      this.selectedTicker = ticker[0]
+    },
+    getAttr: function(o, s) {
+      s = s.replace(/^\./, '');           // strip a leading dot
+      let a = s.split('.');
+      for (let i = 0, n = a.length; i < n; ++i) {
+        let k = a[i];
+        if (o === null) {
+          return null
+        }
+        if (k in o) {
+          o = o[k];
+        } else {
+          return;
+        }
+      }
+      return o;
     }
-  }
+  },
 }
 </script>
 
