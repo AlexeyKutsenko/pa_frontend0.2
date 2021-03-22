@@ -198,6 +198,7 @@ export default {
     return {
       displayedFields: [
         { key: 'company_name', sortable: false },
+        { key: 'stock_exchange', sortable: false},
         { key: 'symbol', sortable: false },
         { key: 'country', sortable: false },
         { key: 'sector', sortable: false },
