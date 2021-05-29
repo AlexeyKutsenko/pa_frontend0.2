@@ -78,7 +78,7 @@
 
 <script>
 export default {
-  name: "PortfolioPolicyView",
+  name: 'PortfolioPolicyView',
   props: {
     portfolioId: {
       type: Number,
@@ -110,39 +110,26 @@ export default {
   created: function () {
     this.portfolioPolicyUrl = `/portfolio-policies/`
   },
-  beforeUpdate: function () {
-    if (this.portfolioPolicy === null) {
-      this.finApi
-        .post(this.portfolioPolicyUrl, {'portfolio': this.portfolioId})
-        .then((response) => {
-          this.assetToEquityMaxRatio = response.data.asset_to_equity_max_ratio;
-          this.assetToEquityMinRatio = response.data.asset_to_equity_min_ratio;
-          this.debtToEquityMaxRatio = response.data.debt_to_equity_max_ratio;
-          this.maxDividendPayoutRatio = response.data.max_dividend_payout_ratio;
-          this.minimumAnnualEarningsGrowth = response.data.minimum_annual_earnings_growth;
-          this.peQuantile = response.data.pe_quantile;
-        })
-    } else if (this.portfolioPolicy) {
-      this.assetToEquityMaxRatio = this.portfolioPolicy.asset_to_equity_max_ratio;
-      this.assetToEquityMinRatio = this.portfolioPolicy.asset_to_equity_min_ratio;
-      this.debtToEquityMaxRatio = this.portfolioPolicy.debt_to_equity_max_ratio;
-      this.maxDividendPayoutRatio = this.portfolioPolicy.max_dividend_payout_ratio;
-      this.minimumAnnualEarningsGrowth = this.portfolioPolicy.minimum_annual_earnings_growth;
-      this.peQuantile = this.portfolioPolicy.pe_quantile;
-    }
+  mounted: function () {
+    this.assetToEquityMaxRatio = this.portfolioPolicy.asset_to_equity_max_ratio
+    this.assetToEquityMinRatio = this.portfolioPolicy.asset_to_equity_min_ratio
+    this.debtToEquityMaxRatio = this.portfolioPolicy.debt_to_equity_max_ratio
+    this.maxDividendPayoutRatio = this.portfolioPolicy.max_dividend_payout_ratio
+    this.minimumAnnualEarningsGrowth = this.portfolioPolicy.minimum_annual_earnings_growth
+    this.peQuantile = this.portfolioPolicy.pe_quantile
   },
   methods: {
     updatePortfolioPolicy: function () {
-      let updatingUrl = this.portfolioPolicyUrl + this.portfolioPolicy.id + '/';
+      let updatingUrl = this.portfolioPolicyUrl + this.portfolioPolicy.id + '/'
       this.finApi
         .put(updatingUrl, {
-          "asset_to_equity_max_ratio": this.assetToEquityMaxRatio,
-          "asset_to_equity_min_ratio": this.assetToEquityMinRatio,
-          "debt_to_equity_max_ratio": this.debtToEquityMaxRatio,
-          "max_dividend_payout_ratio": this.maxDividendPayoutRatio,
-          "minimum_annual_earnings_growth": this.minimumAnnualEarningsGrowth,
-          "pe_quantile": this.peQuantile,
-          "portfolio": this.portfolioId
+          'asset_to_equity_max_ratio': this.assetToEquityMaxRatio,
+          'asset_to_equity_min_ratio': this.assetToEquityMinRatio,
+          'debt_to_equity_max_ratio': this.debtToEquityMaxRatio,
+          'max_dividend_payout_ratio': this.maxDividendPayoutRatio,
+          'minimum_annual_earnings_growth': this.minimumAnnualEarningsGrowth,
+          'pe_quantile': this.peQuantile,
+          'portfolio': this.portfolioId
         })
         .then((response) => {
           if (response.status === 200) {
@@ -151,7 +138,7 @@ export default {
                 variant: 'success',
                 solid: false
               }
-            );
+            )
           }
         })
         .catch((error) => {
@@ -160,7 +147,7 @@ export default {
               variant: 'danger',
               solid: true
             }
-          );
+          )
         })
     }
   }
