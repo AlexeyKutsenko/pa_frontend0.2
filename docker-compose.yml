@@ -11,3 +11,4 @@ services:
     - "8080:8080"
     volumes:
     - ./pa/src:/pa/src
+    - ./pa/public:/pa/public
