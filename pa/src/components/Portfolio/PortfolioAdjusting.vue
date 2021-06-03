@@ -160,7 +160,7 @@
             <b-button @click="approveTicker(data.item)">
               <b-icon-check />
             </b-button>
-            <b-button @click="skipTicker(data.item.stock_exchange, data.item.symbol)">
+            <b-button @click="skipTicker(data.item.id)">
               <b-icon-x />
             </b-button>
           </b-button-group>
@@ -266,8 +266,8 @@ export default {
       this.selectedIndex += 1;
       this.selectedIndex -= 1;
     },
-    skipTicker: function (stock_exchange, ticker_name) {
-      this.skipped_tickers.push([stock_exchange, ticker_name])
+    skipTicker: function (tickerId) {
+      this.skipped_tickers.push(tickerId)
       this.adjustPortfolio()
     },
     reloadIndexTickers: function () {

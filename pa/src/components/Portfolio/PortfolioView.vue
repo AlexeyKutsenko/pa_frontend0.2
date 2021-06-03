@@ -175,6 +175,7 @@
             title="Portfolio Policy"
           >
             <PortfolioPolicyView
+              v-if="portfolioPolicy"
               :portfolio-id="portfolio.id"
               :portfolio-policy="portfolioPolicy"
             />
@@ -198,7 +199,7 @@ export default {
     return {
       displayedFields: [
         { key: 'company_name', sortable: false },
-        { key: 'stock_exchange', sortable: false },
+        { key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false },
         { key: 'symbol', sortable: false },
         { key: 'country', sortable: false },
         { key: 'sector', sortable: false },
