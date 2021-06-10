@@ -1,6 +1,5 @@
 import VueRouter from "vue-router";
 import IndicesList from "../components/Index/IndicesList"
-import IndexView from "../components/Index/IndexView"
 import HomePage from "../components/HomePage";
 import Login from "../components/Auth/Login";
 import Registration from "../components/Auth/Registration";
@@ -14,7 +13,6 @@ const router = new VueRouter({
         {path: "/login", name: 'login', component: Login, meta: {guest: true}},
         {path: "/registration", name: "registration", component: Registration, meta: {guest: true}},
         {path: "/indices", component: IndicesList, meta: {requiresAuth: true}},
-        {path: "/indices/:id", component: IndexView, meta: {requiresAuth: true}},
         {path: "/portfolios", component: PortfoliosList, meta: {requiresAuth: true}},
         {path: "/portfolios/:id", component: PortfolioView, meta: {requiresAuth: true}}
     ]

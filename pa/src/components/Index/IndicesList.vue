@@ -19,21 +19,9 @@ export default {
             url: '/indices/',
             fields: [
                 {
-                    key: 'data_source_url',
+                    key: 'name',
                     sortable: true,
                 },
-                {
-                    key: 'updated',
-                    sortable: true
-                },
-                {
-                    key: 'created',
-                    sortable: true,
-                },
-                {
-                    key: 'action',
-                    label: 'Actions'
-                }
             ]
         }
     },
