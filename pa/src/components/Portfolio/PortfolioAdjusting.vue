@@ -123,6 +123,8 @@
         class="text-center"
         :fields="actionDisplayedFields"
         :items="adjustedTickers"
+        :sort-by="sortBy"
+        :sort-desc="true"
         hover
         striped
         small
@@ -169,14 +171,11 @@
     </b-col>
   </b-row>
 </template>
+
 <script>
 export default {
   name: 'PortfolioAdjusting',
   props: {
-    displayedFields: {
-      type: Array,
-      default: () => []
-    },
     portfolio: {
       type: Object,
       default: () => {
@@ -190,7 +189,16 @@ export default {
   },
   data: function () {
     return {
-      actionDisplayedFields: undefined,
+      actionDisplayedFields:  [
+        { key: 'company_name', sortable: false },
+        { key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false },
+        { key: 'symbol', sortable: false },
+        { key: 'amount', sortable: false },
+        { key: 'price', sortable: true },
+        { key: 'weight', sortable: true },
+        { key: 'cost', sortable: true },
+        { key: 'action', sortable: false}
+      ],
       adjustedTickers: [],
       approvedTickers: new Set(),
       indexUrl: '/indices',
@@ -199,6 +207,7 @@ export default {
       selectableIndices: [],
       selectedIndex: undefined,
       skipped_tickers: [],
+      sortBy: 'weight',
     }
   },
   computed: {
@@ -215,7 +224,6 @@ export default {
     },
   },
   created() {
-    this.actionDisplayedFields = this.displayedFields.concat([{key: 'action', sortable: false}]);
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
     this.adjustPortfolioUrl = `${this.portfolioUrl}/adjust/indices/`;
   },
@@ -242,14 +250,16 @@ export default {
         }
       }).then((response) => {
         this.adjustedTickers = []
+        let summaryCost = Number(response.data.tickers.reduce((a, b) => a + b.cost, 0)).toFixed(2)
+
         response.data.tickers.forEach(ticker => {
-          if (this.approvedTickers.has(ticker.symbol)) {
+          if (this.approvedTickers.has(ticker.id)) {
             ticker._rowVariant = 'success'
           }
+          ticker.weight = (ticker.cost / summaryCost).toFixed(2)
           this.adjustedTickers.push(ticker)
         })
 
-        let summaryCost = this.adjustedTickers.reduce((a, b) => a + b.cost, 0)
         this.adjustedTickers.push({
           'company_name': 'Summary',
           'cost': summaryCost
@@ -257,8 +267,13 @@ export default {
       })
     },
     approveTicker: function (ticker) {
-      this.approvedTickers.add(ticker.symbol);
-      ticker._rowVariant = "success";
+      if (this.approvedTickers.has(ticker.id)) {
+        this.approvedTickers.delete(ticker.id)
+        ticker._rowVariant = '';
+      } else {
+        this.approvedTickers.add(ticker.id);
+        ticker._rowVariant = "success";
+      }
       this.$refs['tickers-table'].refresh();
     },
     computeIsIndexUpdatableProperty: function () {

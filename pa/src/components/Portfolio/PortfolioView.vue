@@ -156,7 +156,6 @@
             title="Adjusting"
           >
             <PortfolioAdjusting
-              :displayed-fields="displayedFields"
               :portfolio="portfolio"
               :updating-statuses="updatingStatuses"
             />
@@ -197,21 +196,6 @@ export default {
   components: { PortfolioAdjusting, PortfolioBreakdowns, PortfolioPolicyView },
   data: function () {
     return {
-      displayedFields: [
-        { key: 'company_name', sortable: false },
-        { key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false },
-        { key: 'symbol', sortable: false },
-        { key: 'country', sortable: false },
-        { key: 'sector', sortable: false },
-        { key: 'industry', sortable: false },
-        { key: 'debt', sortable: false },
-        { key: 'annual_earnings_growth', sortable: false },
-        { key: 'returns_ratios', sortable: false },
-        { key: 'pe', label: 'PE', sortable: false },
-        { key: 'amount', sortable: false },
-        { key: 'price', sortable: true },
-        { key: 'cost', sortable: true },
-      ],
       indicatorsViewFields: [
         {
           key: 'amount',
