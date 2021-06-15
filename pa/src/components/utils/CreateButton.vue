@@ -11,14 +11,19 @@
     >
       <FormComponent
         ref="formComponent"
-        :fields-info="fieldsInfo"
+        :embedded="true"
+        :prop-form="form"
+        :url="apiUrl"
       />
     </b-modal>
   </div>
 </template>
 
 <script>
-import FormComponent from "./FormComponent";
+import FormComponent from './FormComponent';
+import {parse_options} from '../../utils/parser';
+import {prepare_request_data} from '../../utils/helpers';
+import {Form} from "../../utils/form";
 
 export default {
   name: "CreateButton",
@@ -30,6 +35,7 @@ export default {
   data: function () {
     return {
       fieldsInfo: {},
+      form: null,
       errorMsgConfig: {
         title: 'Error',
         variant: 'danger',
@@ -38,67 +44,37 @@ export default {
     }
   },
   computed: {
-    fin_api: function () {
+    finApi: function () {
       return this.$store.getters.finApi
     },
   },
   created: function () {
-    this.getCreationOptions();
-  },
-  methods: {
-    getCreationOptions: function () {
-      this.fin_api
+    let that = this
+    this.finApi
         .options(this.apiUrl)
         .then(response => {
           if (response.data) {
-            let creationData = response.data['actions']['POST'];
+            let fieldsInfo = parse_options(response.data['actions']['POST'])
 
-            if (creationData['query_params']) {
-              let query_params = creationData['query_params'];
-              delete creationData['query_params'];
-              for (const query_param in query_params) {
-                if (query_params.hasOwnProperty(query_param) &&
-                  !query_params[query_param]['read_only']) {
-                  this.fieldsInfo[query_param] = query_params[query_param];
-                  this.fieldsInfo[query_param]['query_param'] = true;
-                }
-              }
-            }
+            that.form = new Form(fieldsInfo)
 
-            for (let field of Object.keys(creationData)) {
-              if (creationData.hasOwnProperty(field) &&
-                !creationData[field]['read_only']) {
-                this.fieldsInfo[field] = creationData[field];
-              }
-            }
           }
         })
         .catch(errorResponse => {
           this.$bvToast.toast(`${errorResponse}`, this.errorMsgConfig)
         })
-
-    },
+  },
+  methods: {
     submitForm: function (bvModalEvt) {
       bvModalEvt.preventDefault();
 
-      let form = this.$refs.formComponent.form;
+      let form = this.$refs.formComponent.propForm;
       form.validate();
 
       if (form.valid) {
-        let creationData = {};
-        let paramsQuery = {};
+        let {creationData, paramsQuery} = prepare_request_data(form);
 
-        for (let field of Object.keys(form.fields)) {
-          if (form.fields.hasOwnProperty(field)) {
-            if (form.fields[field]['query_param']) {
-              paramsQuery[field] = form.fields[field].data;
-            } else {
-              creationData[field] = form.fields[field].data
-            }
-          }
-        }
-
-        this.fin_api
+        this.finApi
           .post(this.apiUrl, creationData, {params: paramsQuery})
           .then(response => {
             if (response.status === 201) {

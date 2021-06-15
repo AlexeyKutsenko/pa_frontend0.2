@@ -66,6 +66,14 @@ class IntegerFormField extends NumberFormField {
     }
 }
 
+class HiddenIntegerFormField extends IntegerFormField {
+    type = 'hidden';
+
+    constructor(fieldInfo) {
+        super(fieldInfo);
+    }
+}
+
 class TextFormField extends FormField {
     type = 'text';
 
@@ -96,7 +104,7 @@ class ChoiceFormField extends FormField {
 const typesInfo = {
     'choice': ChoiceFormField,
     'decimal': DecimalFormField,
-    'field': null,
+    'field': HiddenIntegerFormField,
     'integer': IntegerFormField,
     'string': TextFormField,
 };
@@ -110,9 +118,15 @@ export class Form {
             if (fieldsInfo.hasOwnProperty(field)) {
                 let formField = typesInfo[fieldsInfo[field]['type']];
                 if (formField !== null) {
-                  this.fields[field] = new formField(fieldsInfo[field]);
+                    this.fields[field] = new formField(fieldsInfo[field]);
                 }
             }
+        }
+    }
+
+    set_defaults(entity) {
+        for (const field_name in this.fields) {
+            this.fields[field_name]['data'] = entity[field_name]
         }
     }
 
