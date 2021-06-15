@@ -94,10 +94,11 @@ class ChoiceFormField extends FormField {
 }
 
 const typesInfo = {
+    'choice': ChoiceFormField,
     'decimal': DecimalFormField,
+    'field': null,
     'integer': IntegerFormField,
     'string': TextFormField,
-    'choice': ChoiceFormField,
 };
 
 export class Form {
@@ -108,7 +109,9 @@ export class Form {
         for (const field in fieldsInfo) {
             if (fieldsInfo.hasOwnProperty(field)) {
                 let formField = typesInfo[fieldsInfo[field]['type']];
-                this.fields[field] = new formField(fieldsInfo[field]);
+                if (formField !== null) {
+                  this.fields[field] = new formField(fieldsInfo[field]);
+                }
             }
         }
     }
