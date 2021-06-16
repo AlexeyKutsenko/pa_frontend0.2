@@ -18,7 +18,9 @@
       </b-col>
     </b-row>
     <!-- Portfolio Status -->
-    <b-row class="align-items-center text-center m-1">
+    <b-row
+      class="align-items-center text-center m-1"
+    >
       <b-col>
         <div>
           Status:
@@ -54,12 +56,12 @@
             id="portfolio-tickers-last-updated-date"
           >
             <!-- More than a week -->
-            <div v-if="portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7) > 1">
-              {{ Math.floor( portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7) ) }} weeks ago
+            <div v-if="(portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7)) > 1">
+              {{ Math.floor(portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7)) }} weeks ago
             </div>
             <!-- More than a day -->
             <div v-else-if=" (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7 > 1 ">
-              {{ Math.floor( (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7 ) }} days ago
+              {{ Math.floor((portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7) }} days ago
             </div>
             <!-- More than an hour -->
             <div v-else-if="(portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24 > 1 ">
@@ -273,12 +275,8 @@ export default {
   },
   computed: {
     isPortfolioUpdatable: function () {
-      let updatedMoreThanHourAgo =
-        this.portfolio.tickersTimeDelta / (1000 * 60 * 60) > 1;
-      return (
-        this.portfolio.status !== this.updatingStatuses.updating &&
-        updatedMoreThanHourAgo
-      );
+      let updatedMoreThanHourAgo = this.portfolio.tickersTimeDelta / (1000 * 60 * 60) > 1;
+      return (this.portfolio.status !== this.updatingStatuses.updating && updatedMoreThanHourAgo);
     },
     finApi: function () {
       return this.$store.getters.finApi;
@@ -293,44 +291,43 @@ export default {
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
   },
   mounted: function () {
-    this.finApi.get(this.portfolioUrl).then((response) => {
-      this.portfolio.accounts = response.data.accounts;
-      this.portfolio.exantesettings = response.data.exantesettings;
-      this.portfolio.id = response.data.id;
-      this.portfolio.name = response.data.name;
-      this.portfolio.status = response.data.status;
-      this.portfolio.tickers = response.data.tickers;
-      this.portfolio.tickersLastUpdated = new Date(
-        response.data.tickers_last_updated
-      );
-      this.portfolio.tickersTimeDelta =
-        new Date() - this.portfolio.tickersLastUpdated;
-      this.portfolioPolicy = response.data.portfolio_policy;
-      this.industriesBreakdown = response.data.industries_breakdown;
-      this.sectorsBreakdown = response.data.sectors_breakdown;
-      this.totalTickers = response.data.total_tickers;
-    });
+    this.finApi
+      .get(this.portfolioUrl)
+      .then((response) => {
+        this.portfolio.accounts = response.data.accounts;
+        this.portfolio.exantesettings = response.data.exantesettings;
+        this.portfolio.id = response.data.id;
+        this.portfolio.name = response.data.name;
+        this.portfolio.status = response.data.status;
+        this.portfolio.tickers = response.data.tickers;
+        this.portfolio.tickersLastUpdated = new Date(
+          response.data.tickers_last_updated
+        );
+        this.portfolio.tickersTimeDelta =
+          new Date() - this.portfolio.tickersLastUpdated;
+        this.portfolioPolicy = response.data.portfolio_policy;
+        this.industriesBreakdown = response.data.industries_breakdown;
+        this.sectorsBreakdown = response.data.sectors_breakdown;
+        this.totalTickers = response.data.total_tickers;
+      });
   },
   methods: {
     reloadPortfolioTickers: function () {
       let reloadUrl = `${this.portfolioUrl}/tickers/`;
-      this.finApi
-        .put(reloadUrl)
-        .then((response) => {
-          let responseStatuses = [200, 202];
-          if (responseStatuses.includes(response.status)) {
-            this.portfolio.status = this.updatingStatuses.updating;
-            this.portfolio.tickersLastUpdated = new Date();
-            this.portfolio.tickersTimeDelta = 0;
-          }
-        })
-        .catch((response) => {
-          if (response.status === 406) {
-            this.portfolio.status = this.updatingStatuses.updating;
-            this.portfolio.tickersLastUpdated = new Date();
-            this.portfolio.tickersTimeDelta = 0;
-          }
-        });
+      this.finApi.put(reloadUrl).then((response) => {
+        let responseStatuses = [200, 202];
+        if (responseStatuses.includes(response.status)) {
+          this.portfolio.status = this.updatingStatuses.updating;
+          this.portfolio.tickersLastUpdated = new Date();
+          this.portfolio.tickersTimeDelta = 0;
+        }
+      }).catch((response) => {
+        if (response.status === 406) {
+          this.portfolio.status = this.updatingStatuses.updating;
+          this.portfolio.tickersLastUpdated = new Date();
+          this.portfolio.tickersTimeDelta = 0;
+        }
+      });
     },
     onRowSelected: function (ticker) {
       this.selectedTicker = ticker[0];
