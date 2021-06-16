@@ -47,63 +47,43 @@
       </b-col>
       <b-col>
         Last Updated:
-        <div v-if="portfolio.tickersLastUpdated">
-          <div id="portfolio-tickers-last-updated-date">
+        <div
+          v-if="portfolio.tickersLastUpdated"
+        >
+          <div
+            id="portfolio-tickers-last-updated-date"
+          >
             <!-- More than a week -->
-            <div
-              v-if="portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7) > 1"
-            >
-              {{
-                Math.floor(
-                  portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7)
-                )
-              }}
-              weeks ago
+            <div v-if="portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7) > 1">
+              {{ Math.floor( portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7) ) }} weeks ago
             </div>
             <!-- More than a day -->
-            <div
-              v-else-if="
-                (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7 > 1
-              "
-            >
-              {{
-                Math.floor(
-                  (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7
-                )
-              }}
-              days ago
+            <div v-else-if=" (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7 > 1 ">
+              {{ Math.floor( (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7 ) }} days ago
             </div>
             <!-- More than an hour -->
-            <div
-              v-else-if="
-                (portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24 > 1
-              "
-            >
-              {{
-                Math.floor((portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24)
-              }}
-              hours ago
+            <div v-else-if="(portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24 > 1 ">
+              {{ Math.floor((portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24) }} hours ago
             </div>
             <!-- More than a minute -->
-            <div
-              v-else-if="(portfolio.tickersTimeDelta / (1000 * 60)) % 60 > 1"
-            >
-              {{
-                Math.floor((portfolio.tickersTimeDelta / (1000 * 60)) % 60)
-              }}
-              minutes ago
+            <div v-else-if="(portfolio.tickersTimeDelta / (1000 * 60)) % 60 > 1">
+              {{ Math.floor((portfolio.tickersTimeDelta / (1000 * 60)) % 60) }} minutes ago
             </div>
             <div v-else>
               Less than minute ago
             </div>
           </div>
-          <b-tooltip target="portfolio-tickers-last-updated-date">
+          <b-tooltip
+            target="portfolio-tickers-last-updated-date"
+          >
             {{ portfolio.tickersLastUpdated }}
           </b-tooltip>
         </div>
       </b-col>
       <b-col>
-        <span id="reloadPortfolioTickers">
+        <span
+          id="reloadPortfolioTickers"
+        >
           <b-button
             variant="outline-secondary"
             :disabled="!isPortfolioUpdatable"
@@ -131,7 +111,9 @@
                 fluid
               >
                 <b-row class="text-center">
-                  <b-col cols="8">
+                  <b-col
+                    cols="8"
+                  >
                     <b-table
                       bordered
                       selectable
@@ -168,13 +150,17 @@
               </b-container>
             </b-list-group>
           </b-tab>
-          <b-tab title="Adjusting">
+          <b-tab
+            title="Adjusting"
+          >
             <PortfolioAdjusting
               :portfolio="portfolio"
               :updating-statuses="updatingStatuses"
             />
           </b-tab>
-          <b-tab title="Breakdowns">
+          <b-tab
+            title="Breakdowns"
+          >
             <PortfolioBreakdowns
               v-if="portfolio.tickers"
               :industries-breakdown="industriesBreakdown"
@@ -183,14 +169,18 @@
               :total-tickers="totalTickers"
             />
           </b-tab>
-          <b-tab title="Portfolio Policy">
+          <b-tab
+            title="Portfolio Policy"
+          >
             <PortfolioPolicyView
               v-if="portfolioPolicy"
               :portfolio-id="portfolio.id"
               :portfolio-policy="portfolioPolicy"
             />
           </b-tab>
-          <b-tab title="Exante Settings">
+          <b-tab
+            title="Exante Settings"
+          >
             <ExanteSettings
               v-if="portfolio.exantesettings || portfolio.id"
               :exante-settings="portfolio.exantesettings"
@@ -217,7 +207,7 @@ export default {
     PortfolioBreakdowns,
     PortfolioPolicyView,
   },
-  data: function() {
+  data: function () {
     return {
       indicatorsViewFields: [
         {
@@ -269,11 +259,11 @@ export default {
       },
       portfolioPolicy: undefined,
       portfolioViewFields: [
-        { key: "symbol", label: "Symbol" },
-        { key: "company_name", label: "Name" },
-        { key: "country", label: "Country", sortable: true },
-        { key: "sector", label: "Sector", sortable: true },
-        { key: "industry", label: "Industry", sortable: true },
+        {key: "symbol", label: "Symbol"},
+        {key: "company_name", label: "Name"},
+        {key: "country", label: "Country", sortable: true},
+        {key: "sector", label: "Sector", sortable: true},
+        {key: "industry", label: "Industry", sortable: true},
       ],
       sectorsBreakdown: undefined,
       selectedTicker: undefined,
@@ -282,7 +272,7 @@ export default {
     };
   },
   computed: {
-    isPortfolioUpdatable: function() {
+    isPortfolioUpdatable: function () {
       let updatedMoreThanHourAgo =
         this.portfolio.tickersTimeDelta / (1000 * 60 * 60) > 1;
       return (
@@ -290,7 +280,7 @@ export default {
         updatedMoreThanHourAgo
       );
     },
-    finApi: function() {
+    finApi: function () {
       return this.$store.getters.finApi;
     },
   },
@@ -302,7 +292,7 @@ export default {
     };
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
   },
-  mounted: function() {
+  mounted: function () {
     this.finApi.get(this.portfolioUrl).then((response) => {
       this.portfolio.accounts = response.data.accounts;
       this.portfolio.exantesettings = response.data.exantesettings;
@@ -322,7 +312,7 @@ export default {
     });
   },
   methods: {
-    reloadPortfolioTickers: function() {
+    reloadPortfolioTickers: function () {
       let reloadUrl = `${this.portfolioUrl}/tickers/`;
       this.finApi
         .put(reloadUrl)
@@ -342,10 +332,10 @@ export default {
           }
         });
     },
-    onRowSelected: function(ticker) {
+    onRowSelected: function (ticker) {
       this.selectedTicker = ticker[0];
     },
-    getAttr: function(o, s) {
+    getAttr: function (o, s) {
       s = s.replace(/^\./, ""); // strip a leading dot
       let a = s.split(".");
       for (let i = 0, n = a.length; i < n; ++i) {
