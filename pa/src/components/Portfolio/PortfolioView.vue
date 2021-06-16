@@ -300,11 +300,8 @@ export default {
         this.portfolio.name = response.data.name;
         this.portfolio.status = response.data.status;
         this.portfolio.tickers = response.data.tickers;
-        this.portfolio.tickersLastUpdated = new Date(
-          response.data.tickers_last_updated
-        );
-        this.portfolio.tickersTimeDelta =
-          new Date() - this.portfolio.tickersLastUpdated;
+        this.portfolio.tickersLastUpdated = new Date(response.data.tickers_last_updated);
+        this.portfolio.tickersTimeDelta = new Date() - this.portfolio.tickersLastUpdated;
         this.portfolioPolicy = response.data.portfolio_policy;
         this.industriesBreakdown = response.data.industries_breakdown;
         this.sectorsBreakdown = response.data.sectors_breakdown;
