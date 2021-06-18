@@ -75,7 +75,7 @@
 import {prepare_request_data} from '@/utils/helpers';
 import {parse_options} from "@/utils/parser";
 import {Form} from "../../utils/form";
-import {errorMsg, successUpdateMsg} from "./msgHelpers";
+import {errorMsg, successCreateMsg, successUpdateMsg} from "./msgHelpers";
 
 export default {
   name: 'FormComponent',
@@ -140,6 +140,7 @@ export default {
     }
 
     this.errorMsg = errorMsg
+    this.successCreateMsg = successCreateMsg
     this.successUpdateMsg = successUpdateMsg
 
   },
@@ -157,6 +158,8 @@ export default {
             .then(response => {
               if (response.status === 200) {
                 this.successUpdateMsg(this.entityName)
+              } else {
+                throw 'Response status is not supported'
               }
             })
             .catch(errorResponse => {
@@ -167,30 +170,13 @@ export default {
             .post(this.requestUrl, creationData, {params: paramsQuery})
             .then(response => {
               if (response.status === 201) {
-                this.$bvToast.toast(`${this.entityName} has been created`, {
-                  title: 'Success',
-                  variant: 'success',
-                  solid: false
-                })
+                this.successCreateMsg(this.entityName)
+              } else {
+                throw 'Response status is not supported'
               }
             })
             .catch(errorResponse => {
-              if (errorResponse["message"] && errorResponse.response.status !== 400) {
-                this.$bvToast.toast(`${errorResponse["message"]}`, this.errorMsgConfig)
-              } else {
-                for (const errorField in errorResponse.response.data) {
-                  if (errorResponse.response.data.hasOwnProperty(errorField) && this.form.fields[errorField]) {
-                    let fieldName = this.form.fields[errorField].label;
-                    let errorMsg = errorResponse.response.data[errorField];
-
-                    this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
-                  } else {
-                    let fieldName = 'detail';
-                    let errorMsg = errorResponse.response.data[fieldName]
-                    this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
-                  }
-                }
-              }
+              this.errorMsg(errorResponse, this.form)
             })
         }
       } else {
