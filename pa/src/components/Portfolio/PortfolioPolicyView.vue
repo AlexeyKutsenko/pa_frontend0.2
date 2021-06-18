@@ -6,7 +6,7 @@
         @submit.prevent="updatePortfolioPolicy"
       >
         <b-form-group
-          label="Assets to Equity Max Ratio"
+          label="Assets To Equity Max Ratio"
           label-for="asset-to-equity-max-ratio"
         >
           <b-form-input
@@ -16,7 +16,7 @@
           />
         </b-form-group>
         <b-form-group
-          label="Assets to Equity Min Ratio"
+          label="Assets To Equity Min Ratio"
           label-for="asset-to-equity-min-ratio"
         >
           <b-form-input

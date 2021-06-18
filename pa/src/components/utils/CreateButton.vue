@@ -7,18 +7,23 @@
     </div>
     <b-modal
       :id="'create' + entityName"
-      @ok="submitForm"
+      @ok.prevent="submitForm"
     >
       <FormComponent
         ref="formComponent"
-        :fields-info="fieldsInfo"
+        :embedded="true"
+        :method="'POST'"
+        :prop-form="form"
+        :request-url="apiUrl"
       />
     </b-modal>
   </div>
 </template>
 
 <script>
-import FormComponent from "./FormComponent";
+import FormComponent from './FormComponent';
+import {prepare_request_data} from '@/utils/helpers';
+import {errorMsg, successCreateMsg} from "./msgHelpers";
 
 export default {
   name: "CreateButton",
@@ -30,6 +35,7 @@ export default {
   data: function () {
     return {
       fieldsInfo: {},
+      form: null,
       errorMsgConfig: {
         title: 'Error',
         variant: 'danger',
@@ -38,108 +44,41 @@ export default {
     }
   },
   computed: {
-    fin_api: function () {
+    finApi: function () {
       return this.$store.getters.finApi
     },
   },
   created: function () {
-    this.getCreationOptions();
+    this.errorMsg = errorMsg
+    this.successCreateMsg = successCreateMsg
   },
   methods: {
-    getCreationOptions: function () {
-      this.fin_api
-        .options(this.apiUrl)
-        .then(response => {
-          if (response.data) {
-            let creationData = response.data['actions']['POST'];
-
-            if (creationData['query_params']) {
-              let query_params = creationData['query_params'];
-              delete creationData['query_params'];
-              for (const query_param in query_params) {
-                if (query_params.hasOwnProperty(query_param) &&
-                  !query_params[query_param]['read_only']) {
-                  this.fieldsInfo[query_param] = query_params[query_param];
-                  this.fieldsInfo[query_param]['query_param'] = true;
-                }
-              }
-            }
-
-            for (let field of Object.keys(creationData)) {
-              if (creationData.hasOwnProperty(field) &&
-                !creationData[field]['read_only']) {
-                this.fieldsInfo[field] = creationData[field];
-              }
-            }
-          }
-        })
-        .catch(errorResponse => {
-          this.$bvToast.toast(`${errorResponse}`, this.errorMsgConfig)
-        })
-
-    },
-    submitForm: function (bvModalEvt) {
-      bvModalEvt.preventDefault();
-
+    submitForm: function () {
       let form = this.$refs.formComponent.form;
       form.validate();
 
       if (form.valid) {
-        let creationData = {};
-        let paramsQuery = {};
+        let {creationData, paramsQuery} = prepare_request_data(form);
 
-        for (let field of Object.keys(form.fields)) {
-          if (form.fields.hasOwnProperty(field)) {
-            if (form.fields[field]['query_param']) {
-              paramsQuery[field] = form.fields[field].data;
-            } else {
-              creationData[field] = form.fields[field].data
-            }
-          }
-        }
-
-        this.fin_api
+        this.finApi
           .post(this.apiUrl, creationData, {params: paramsQuery})
           .then(response => {
             if (response.status === 201) {
+              this.successCreateMsg(this.entityName)
+              this.$emit('entityCreated')
               this.$nextTick(() => {
                 this.$bvModal.hide('create' + this.entityName)
               });
-
-              this.$bvToast.toast(`${this.entityName} has been created`, {
-                  title: 'Success',
-                  variant: 'success',
-                  solid: false
-                }
-              );
-
-              this.$emit('entityCreated')
+            } else {
+              throw 'Response status is not supported'
             }
           })
           .catch(errorResponse => {
-            if (errorResponse["message"] && errorResponse.response.status !== 400) {
-              this.$bvToast.toast(`${errorResponse["message"]}`,
-                this.errorMsgConfig)
-            } else {
-              for (const errorField in errorResponse.response.data) {
-                if (errorResponse.response.data.hasOwnProperty(errorField) &&
-                  form.fields[errorField]) {
-
-                  let fieldName = form.fields[errorField].label;
-                  let errorMsg = errorResponse.response.data[errorField];
-
-                  this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
-                } else {
-                  let fieldName = 'detail';
-                  let errorMsg = errorResponse.response.data[fieldName]
-                  this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
-                }
-              }
-            }
-
             this.$nextTick(() => {
               this.$bvModal.hide('create' + this.entityName)
             });
+
+            this.errorMsg(errorResponse, form)
           });
       }
     }
