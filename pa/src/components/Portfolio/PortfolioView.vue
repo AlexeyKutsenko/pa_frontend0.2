@@ -4,16 +4,35 @@
     <b-row>
       <b-col>
         <h1
-          v-if="portfolio.name"
           class="text-center"
         >
-          {{ portfolio.name }}
-        </h1>
-        <h1
-          v-else
-          class="text-center"
-        >
-          Portfolio #{{ portfolio.id }}
+          {{ portfolio.displayName }}
+          <b-button
+            id="importPortfolioButton"
+            v-b-modal.importPortfolioModal
+            variant="light"
+          >
+            <b-icon
+              icon="arrow-repeat"
+            />
+          </b-button>
+          <b-tooltip
+            target="importPortfolioButton"
+          >
+            Import portfolio from Exante
+          </b-tooltip>
+          <b-modal
+            id="importPortfolioModal"
+            @ok="importPortfolio"
+          >
+            <FormComponent
+              v-if="importPortfolioUrl"
+              ref="importPortfolioForm"
+              :embedded="true"
+              :method="'PUT'"
+              :request-url="importPortfolioUrl"
+            />
+          </b-modal>
         </h1>
       </b-col>
     </b-row>
@@ -89,7 +108,7 @@
           <b-button
             variant="outline-secondary"
             :disabled="!isPortfolioUpdatable"
-            @click="reloadPortfolioTickers()"
+            @click="reloadPortfolioTickersInformation()"
           >
             Reload Tickers Information
           </b-button>
@@ -200,6 +219,10 @@ import ExanteSettings from "./ExanteSettings/ExanteSettings";
 import PortfolioAdjusting from "./PortfolioAdjusting";
 import PortfolioBreakdowns from "./PortfolioBreakdowns";
 import PortfolioPolicyView from "./PortfolioPolicyView";
+import FormComponent from "../utils/FormComponent";
+import {prepare_request_data} from "@/utils/helpers";
+import {errorMsg, successUpdateMsg} from "../utils/msgHelpers";
+
 
 export default {
   name: "PortfolioView",
@@ -208,9 +231,11 @@ export default {
     PortfolioAdjusting,
     PortfolioBreakdowns,
     PortfolioPolicyView,
+    FormComponent
   },
   data: function () {
     return {
+      importPortfolioUrl: undefined,
       indicatorsViewFields: [
         {
           key: "amount",
@@ -252,12 +277,13 @@ export default {
       industriesBreakdown: undefined,
       portfolio: {
         accounts: undefined,
-        tickers: undefined,
+        adjusted_tickers: undefined,
+        displayName: undefined,
         status: undefined,
+        name: undefined,
+        tickers: undefined,
         tickersLastUpdated: undefined,
         tickersTimeDelta: undefined,
-        name: undefined,
-        adjusted_tickers: undefined,
       },
       portfolioPolicy: undefined,
       portfolioViewFields: [
@@ -289,27 +315,73 @@ export default {
       update_failed: "Update Failed",
     };
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
+    this.importPortfolioUrl = `${this.portfolioUrl}/import_from_exante/`
+
+    this.errorMsg = errorMsg
+    this.successUpdateMsg = successUpdateMsg
   },
   mounted: function () {
-    this.finApi
-      .get(this.portfolioUrl)
-      .then((response) => {
-        this.portfolio.accounts = response.data.accounts;
-        this.portfolio.exantesettings = response.data.exantesettings;
-        this.portfolio.id = response.data.id;
-        this.portfolio.name = response.data.name;
-        this.portfolio.status = response.data.status;
-        this.portfolio.tickers = response.data.tickers;
-        this.portfolio.tickersLastUpdated = new Date(response.data.tickers_last_updated);
-        this.portfolio.tickersTimeDelta = new Date() - this.portfolio.tickersLastUpdated;
-        this.portfolioPolicy = response.data.portfolio_policy;
-        this.industriesBreakdown = response.data.industries_breakdown;
-        this.sectorsBreakdown = response.data.sectors_breakdown;
-        this.totalTickers = response.data.total_tickers;
-      });
+    this.reloadPortfolio()
   },
   methods: {
-    reloadPortfolioTickers: function () {
+    getAttr: function (o, s) {
+      s = s.replace(/^\./, ""); // strip a leading dot
+      let a = s.split(".");
+      for (let i = 0, n = a.length; i < n; ++i) {
+        let k = a[i];
+        if (o === null) {
+          return null;
+        }
+        if (k in o) {
+          o = o[k];
+        } else {
+          return;
+        }
+      }
+      return o;
+    },
+    importPortfolio: function () {
+      let form = this.$refs.importPortfolioForm.form;
+      form.validate()
+
+      if (form.valid) {
+        let {creationData, paramsQuery} = prepare_request_data(form)
+
+        this.finApi
+          .put(this.importPortfolioUrl, creationData, {params: paramsQuery})
+          .then(response => {
+            if (response.status === 200) {
+              this.successUpdateMsg(this.entityName)
+            } else {
+              throw 'Response status is not supported'
+            }
+          })
+          .catch(errorResponse => {
+            this.errorMsg(errorResponse, form)
+          })
+      }
+    },
+    reloadPortfolio: function () {
+      this.finApi
+        .get(this.portfolioUrl)
+        .then((response) => {
+          this.portfolio.accounts = response.data.accounts;
+          this.portfolio.exantesettings = response.data.exantesettings;
+          this.portfolio.id = response.data.id;
+          this.portfolio.name = response.data.name;
+          this.portfolio.status = response.data.status;
+          this.portfolio.tickers = response.data.tickers;
+          this.portfolio.tickersLastUpdated = new Date(response.data.tickers_last_updated);
+          this.portfolio.tickersTimeDelta = new Date() - this.portfolio.tickersLastUpdated;
+          this.portfolioPolicy = response.data.portfolio_policy;
+          this.industriesBreakdown = response.data.industries_breakdown;
+          this.sectorsBreakdown = response.data.sectors_breakdown;
+          this.totalTickers = response.data.total_tickers;
+
+          this.portfolio.displayName = this.portfolio.name ? this.portfolio.name : `Portfolio #${this.portfolio.id}`
+        });
+    },
+    reloadPortfolioTickersInformation: function () {
       let reloadUrl = `${this.portfolioUrl}/tickers/`;
       this.finApi.put(reloadUrl).then((response) => {
         let responseStatuses = [200, 202];
@@ -328,22 +400,6 @@ export default {
     },
     onRowSelected: function (ticker) {
       this.selectedTicker = ticker[0];
-    },
-    getAttr: function (o, s) {
-      s = s.replace(/^\./, ""); // strip a leading dot
-      let a = s.split(".");
-      for (let i = 0, n = a.length; i < n; ++i) {
-        let k = a[i];
-        if (o === null) {
-          return null;
-        }
-        if (k in o) {
-          o = o[k];
-        } else {
-          return;
-        }
-      }
-      return o;
     },
   },
 };

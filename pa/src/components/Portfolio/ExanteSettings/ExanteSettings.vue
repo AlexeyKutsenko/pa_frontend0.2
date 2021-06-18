@@ -4,13 +4,15 @@
       <ExanteSettingsForm
         v-if="exanteSettings"
         :entity="exanteSettings"
+        :method="'PUT'"
         :portfolio-id="portfolioId"
-        :url="String(/exante-settings/)"
+        :request-url="String(/exante-settings/)"
       />
       <ExanteSettingsForm
         v-else
+        :method="'POST'"
         :portfolio-id="portfolioId"
-        :url="String(/exante-settings/)"
+        :request-url="String(/exante-settings/)"
       />
     </b-container>
   </div>

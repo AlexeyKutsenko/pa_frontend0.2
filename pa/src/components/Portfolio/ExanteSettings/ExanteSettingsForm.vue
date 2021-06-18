@@ -3,15 +3,17 @@
     v-if="form"
     :embedded:="embedded"
     :entity="entity"
+    :entity-name="'Exante Settings'"
+    :method="method"
     :prop-form="form"
-    :url="url"
+    :request-url="requestUrl"
   />
 </template>
 
 <script>
 import FormComponent from "../../utils/FormComponent";
-import {parse_options} from "../../../utils/parser";
-import {Form} from "../../../utils/form";
+import {parse_options} from "@/utils/parser";
+import {Form} from "@/utils/form";
 
 export default {
   name: "ExanteSettingsForm",
@@ -22,6 +24,10 @@ export default {
       type: Number,
       required: true
     },
+    method: {
+      type: String,
+      required: true
+    }
   },
   data: function () {
     return {
@@ -36,7 +42,7 @@ export default {
   created: function () {
     let that = this;
     this.finApi
-        .options(this.url)
+        .options(this.requestUrl)
         .then(response => {
           if (response.data) {
             // get options for form building
@@ -45,11 +51,11 @@ export default {
             // build form
             let form = new Form(fieldsInfo);
 
-            form.fields.portfolio.data = this.portfolioId
-
             if (that.entity) {
               form.set_defaults(this.entity)
             }
+
+            form.fields.portfolio.data = that.portfolioId
 
             that.form = form
           }

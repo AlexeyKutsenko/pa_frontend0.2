@@ -7,13 +7,14 @@
     </div>
     <b-modal
       :id="'create' + entityName"
-      @ok="submitForm"
+      @ok.prevent="submitForm"
     >
       <FormComponent
         ref="formComponent"
         :embedded="true"
+        :method="'POST'"
         :prop-form="form"
-        :url="apiUrl"
+        :request-url="apiUrl"
       />
     </b-modal>
   </div>
@@ -21,9 +22,8 @@
 
 <script>
 import FormComponent from './FormComponent';
-import {parse_options} from '../../utils/parser';
-import {prepare_request_data} from '../../utils/helpers';
-import {Form} from "../../utils/form";
+import {prepare_request_data} from '@/utils/helpers';
+import {errorMsg, successCreateMsg} from "./msgHelpers";
 
 export default {
   name: "CreateButton",
@@ -49,26 +49,12 @@ export default {
     },
   },
   created: function () {
-    let that = this
-    this.finApi
-        .options(this.apiUrl)
-        .then(response => {
-          if (response.data) {
-            let fieldsInfo = parse_options(response.data['actions']['POST'])
-
-            that.form = new Form(fieldsInfo)
-
-          }
-        })
-        .catch(errorResponse => {
-          this.$bvToast.toast(`${errorResponse}`, this.errorMsgConfig)
-        })
+    this.errorMsg = errorMsg
+    this.successCreateMsg = successCreateMsg
   },
   methods: {
-    submitForm: function (bvModalEvt) {
-      bvModalEvt.preventDefault();
-
-      let form = this.$refs.formComponent.propForm;
+    submitForm: function () {
+      let form = this.$refs.formComponent.form;
       form.validate();
 
       if (form.valid) {
@@ -78,44 +64,21 @@ export default {
           .post(this.apiUrl, creationData, {params: paramsQuery})
           .then(response => {
             if (response.status === 201) {
+              this.successCreateMsg(this.entityName)
+              this.$emit('entityCreated')
               this.$nextTick(() => {
                 this.$bvModal.hide('create' + this.entityName)
               });
-
-              this.$bvToast.toast(`${this.entityName} has been created`, {
-                  title: 'Success',
-                  variant: 'success',
-                  solid: false
-                }
-              );
-
-              this.$emit('entityCreated')
+            } else {
+              throw 'Response status is not supported'
             }
           })
           .catch(errorResponse => {
-            if (errorResponse["message"] && errorResponse.response.status !== 400) {
-              this.$bvToast.toast(`${errorResponse["message"]}`,
-                this.errorMsgConfig)
-            } else {
-              for (const errorField in errorResponse.response.data) {
-                if (errorResponse.response.data.hasOwnProperty(errorField) &&
-                  form.fields[errorField]) {
-
-                  let fieldName = form.fields[errorField].label;
-                  let errorMsg = errorResponse.response.data[errorField];
-
-                  this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
-                } else {
-                  let fieldName = 'detail';
-                  let errorMsg = errorResponse.response.data[fieldName]
-                  this.$bvToast.toast(`${fieldName}: ${errorMsg}`, this.errorMsgConfig)
-                }
-              }
-            }
-
             this.$nextTick(() => {
               this.$bvModal.hide('create' + this.entityName)
             });
+
+            this.errorMsg(errorResponse, form)
           });
       }
     }
