@@ -137,14 +137,14 @@
 </template>
 
 <script>
-import ExanteSettings from "./ExanteSettings/ExanteSettings";
-import PortfolioAdjusting from "./PortfolioAdjusting";
-import PortfolioBreakdowns from "./PortfolioBreakdowns";
-import PortfolioPolicyView from "./PortfolioPolicyView";
-import FormComponent from "../utils/FormComponent";
+import ExanteSettings from "./tabs/ExanteSettings/ExanteSettings";
+import PortfolioAdjusting from "./tabs/PortfolioAdjusting/PortfolioAdjusting";
+import PortfolioBreakdowns from "./tabs/PortfolioBreakdowns";
+import PortfolioPolicyView from "./tabs/PortfolioPolicyView";
+import FormComponent from "../utils/FormComponent/FormComponent";
 import {prepare_request_data} from "@/utils/helpers";
 import {errorMsg, successUpdateMsg} from "../utils/msgHelpers";
-import PortfolioStatus from "./common/PortfolioStatus";
+import PortfolioStatus from "./PortfolioStatus";
 
 
 export default {

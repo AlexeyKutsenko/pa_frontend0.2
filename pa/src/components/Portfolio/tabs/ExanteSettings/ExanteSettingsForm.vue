@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import FormComponent from "../../utils/FormComponent";
+import FormComponent from "../../../utils/FormComponent/FormComponent";
 import {parse_options} from "@/utils/parser";
 import {Form} from "@/utils/form";
 
