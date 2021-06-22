@@ -205,6 +205,7 @@ export default {
       selectedIndex: undefined,
       skipped_tickers: [],
       sortBy: 'weight',
+      updatingStatuses: undefined,
     }
   },
   computed: {
