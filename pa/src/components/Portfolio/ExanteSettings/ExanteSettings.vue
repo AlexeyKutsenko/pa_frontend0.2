@@ -6,7 +6,7 @@
         :entity="exanteSettings"
         :method="'PUT'"
         :portfolio-id="portfolioId"
-        :request-url="String(/exante-settings/)"
+        :request-url="String('/exante-settings/') + exanteSettings.id + '/'"
       />
       <ExanteSettingsForm
         v-else

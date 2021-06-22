@@ -120,6 +120,15 @@ export default {
       return this.$store.getters.finApi
     }
   },
+  watch: {
+    propForm: {
+      deep: true,
+      // eslint-disable-next-line no-unused-vars
+      handler: function(newVal, oldVal) {
+        this.form = newVal
+      }
+    }
+  },
   created: function () {
     if (this.onSubmit() !== undefined) {
       this.onSubmitFunction = this.onSubmit
@@ -152,7 +161,7 @@ export default {
         let {creationData, paramsQuery} = prepare_request_data(this.form)
 
         if (this.entity) {
-          let updateUrl = this.requestUrl + this.entity.id + '/'
+          let updateUrl = this.requestUrl
           this.finApi
             .put(updateUrl, creationData, {params: paramsQuery})
             .then(response => {

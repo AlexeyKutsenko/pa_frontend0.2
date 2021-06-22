@@ -46,13 +46,13 @@ export default {
         .then(response => {
           if (response.data) {
             // get options for form building
-            let fieldsInfo = parse_options(response.data['actions']['POST'])
+            let fieldsInfo = parse_options(response.data['actions'][that.method])
 
             // build form
             let form = new Form(fieldsInfo);
 
             if (that.entity) {
-              form.set_defaults(this.entity)
+              form.set_defaults(that.entity)
             }
 
             form.fields.portfolio.data = that.portfolioId
