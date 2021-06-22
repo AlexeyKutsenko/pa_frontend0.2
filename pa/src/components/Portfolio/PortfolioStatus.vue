@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import {updatingStatuses} from "../../utils/updatingStatuses";
+import {updatingStatuses} from "../utils/updatingStatuses";
 
 export default {
   name: "PortfolioStatus",

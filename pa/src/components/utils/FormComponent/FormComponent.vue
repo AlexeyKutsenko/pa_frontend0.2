@@ -74,8 +74,8 @@
 <script>
 import {prepare_request_data} from '@/utils/helpers';
 import {parse_options} from "@/utils/parser";
-import {Form} from "../../utils/form";
-import {errorMsg, successCreateMsg, successUpdateMsg} from "./msgHelpers";
+import {Form} from "./form";
+import {errorMsg, successCreateMsg, successUpdateMsg} from "../msgHelpers";
 
 export default {
   name: 'FormComponent',
@@ -124,7 +124,7 @@ export default {
     propForm: {
       deep: true,
       // eslint-disable-next-line no-unused-vars
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.form = newVal
       }
     }
