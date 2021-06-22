@@ -99,7 +99,6 @@
           >
             <PortfolioAdjusting
               :portfolio="portfolio"
-              :updating-statuses="updatingStatuses"
             />
           </b-tab>
           <b-tab
@@ -222,7 +221,6 @@ export default {
       sectorsBreakdown: undefined,
       selectedTicker: undefined,
       totalTickers: undefined,
-      updatingStatuses: undefined,
     };
   },
   computed: {

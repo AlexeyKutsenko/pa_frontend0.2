@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import {updatingStatuses} from "../../utils/updatingStatuses";
+
 export default {
   name: "PortfolioStatus",
   props: {
@@ -124,11 +126,7 @@ export default {
     },
   },
   created: function () {
-    this.updatingStatuses = {
-      successfully_updated: "Successfully Updated",
-      updating: "Updating",
-      update_failed: "Update Failed",
-    };
+    this.updatingStatuses = updatingStatuses;
     this.dynamicStatus = this.status;
     this.dynamicTickersLastUpdated = this.tickersLastUpdated;
     this.dynamicTickersTimeDelta = this.tickersTimeDelta;
