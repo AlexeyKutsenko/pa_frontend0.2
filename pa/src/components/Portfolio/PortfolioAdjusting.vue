@@ -173,6 +173,8 @@
 </template>
 
 <script>
+import {updatingStatuses} from "../utils/updatingStatuses";
+
 export default {
   name: 'PortfolioAdjusting',
   props: {
@@ -181,23 +183,18 @@ export default {
       default: () => {
       }
     },
-    updatingStatuses: {
-      type: Object,
-      default: () => {
-      }
-    }
   },
   data: function () {
     return {
-      actionDisplayedFields:  [
-        { key: 'company_name', sortable: false },
-        { key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false },
-        { key: 'symbol', sortable: false },
-        { key: 'amount', sortable: false },
-        { key: 'price', sortable: true },
-        { key: 'weight', sortable: true },
-        { key: 'cost', sortable: true },
-        { key: 'action', sortable: false}
+      actionDisplayedFields: [
+        {key: 'company_name', sortable: false},
+        {key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false},
+        {key: 'symbol', sortable: false},
+        {key: 'amount', sortable: false},
+        {key: 'price', sortable: true},
+        {key: 'weight', sortable: true},
+        {key: 'cost', sortable: true},
+        {key: 'action', sortable: false}
       ],
       adjustedTickers: [],
       approvedTickers: new Set(),
@@ -208,6 +205,7 @@ export default {
       selectedIndex: undefined,
       skipped_tickers: [],
       sortBy: 'weight',
+      updatingStatuses: undefined,
     }
   },
   computed: {
@@ -224,6 +222,7 @@ export default {
     },
   },
   created() {
+    this.updatingStatuses = updatingStatuses;
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
     this.adjustPortfolioUrl = `${this.portfolioUrl}/adjust/indices/`;
   },
