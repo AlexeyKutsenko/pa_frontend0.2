@@ -76,6 +76,7 @@ import {prepare_request_data} from '@/utils/helpers';
 import {parse_options} from "@/utils/parser";
 import {Form} from "../../utils/form";
 import {errorMsg, successCreateMsg, successUpdateMsg} from "./msgHelpers";
+import {RequestMethods} from "../../utils/request_methods";
 
 export default {
   name: 'FormComponent',
@@ -124,7 +125,7 @@ export default {
     propForm: {
       deep: true,
       // eslint-disable-next-line no-unused-vars
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.form = newVal
       }
     }
@@ -144,6 +145,10 @@ export default {
           if (response.data) {
             let fieldsInfo = parse_options(response.data['actions'][that.method])
             that.form = new Form(fieldsInfo)
+
+            if (that.entity) {
+              that.form.set_defaults(that.entity)
+            }
           }
         })
     }
@@ -160,7 +165,7 @@ export default {
       if (this.form.valid) {
         let {creationData, paramsQuery} = prepare_request_data(this.form)
 
-        if (this.entity) {
+        if (this.method === RequestMethods.PUT) {
           let updateUrl = this.requestUrl
           this.finApi
             .put(updateUrl, creationData, {params: paramsQuery})
@@ -174,7 +179,7 @@ export default {
             .catch(errorResponse => {
               this.errorMsg(errorResponse, this.form)
             })
-        } else {
+        } else if (this.method === RequestMethods.POST) {
           this.finApi
             .post(this.requestUrl, creationData, {params: paramsQuery})
             .then(response => {
@@ -187,6 +192,8 @@ export default {
             .catch(errorResponse => {
               this.errorMsg(errorResponse, this.form)
             })
+        } else {
+          throw Error('Unsupported method type')
         }
       } else {
         this.$bvToast.toast('Form is invalid')

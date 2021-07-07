@@ -27,6 +27,29 @@
               <b-col>
                 <div>
                   Index Status:
+                  <b-button
+                    id="importIndex"
+                    variant="light"
+                    @click="importIndex()"
+                  >
+                    <b-icon
+                      icon="arrow-repeat"
+                    />
+                  </b-button>
+                  <b-tooltip
+                    target="importIndex"
+                  >
+                    Import index from the data source
+                  </b-tooltip>
+                  <FormComponent
+                    :key="selectedIndex"
+                    ref="importIndexForm"
+                    :embedded="true"
+                    :entity-name="'Index'"
+                    :entity="indices[selectedIndex]"
+                    :method="'PUT'"
+                    :request-url="`${indexUrl}/${selectedIndex}/`"
+                  />
                 </div>
                 <b-badge
                   v-if="indices[selectedIndex].status === updatingStatuses.successfully_updated"
@@ -173,8 +196,11 @@
 </template>
 
 <script>
+import FormComponent from "../utils/FormComponent";
+
 export default {
   name: 'PortfolioAdjusting',
+  components: {FormComponent},
   props: {
     portfolio: {
       type: Object,
@@ -189,15 +215,15 @@ export default {
   },
   data: function () {
     return {
-      actionDisplayedFields:  [
-        { key: 'company_name', sortable: false },
-        { key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false },
-        { key: 'symbol', sortable: false },
-        { key: 'amount', sortable: false },
-        { key: 'price', sortable: true },
-        { key: 'weight', sortable: true },
-        { key: 'cost', sortable: true },
-        { key: 'action', sortable: false}
+      actionDisplayedFields: [
+        {key: 'company_name', sortable: false},
+        {key: 'stock_exchange.name', label: 'Stock Exchange', sortable: false},
+        {key: 'symbol', sortable: false},
+        {key: 'amount', sortable: false},
+        {key: 'price', sortable: true},
+        {key: 'weight', sortable: true},
+        {key: 'cost', sortable: true},
+        {key: 'action', sortable: false}
       ],
       adjustedTickers: [],
       approvedTickers: new Set(),
@@ -233,6 +259,7 @@ export default {
       .then((response) => {
         response.data.results.forEach(index => {
           this.indices[index.id] = {
+            source: index.source,
             status: index.status,
             tickersLastUpdated: new Date(index.tickers_last_updated),
             tickersTimeDelta: new Date() - new Date(index.tickers_last_updated)
@@ -280,6 +307,9 @@ export default {
       // Is Index Updatable property doesn't compute automatically need to change this.selectedIndex
       this.selectedIndex += 1;
       this.selectedIndex -= 1;
+    },
+    importIndex: function () {
+      this.$refs.importIndexForm.onSubmitFunction()
     },
     skipTicker: function (tickerId) {
       this.skipped_tickers.push(tickerId)
