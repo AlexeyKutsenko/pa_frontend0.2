@@ -266,7 +266,8 @@ export default {
           .put(this.importPortfolioUrl, creationData, {params: paramsQuery})
           .then(response => {
             if (response.status === 200) {
-              this.successUpdateMsg(this.entityName)
+              this.successUpdateMsg('Portfolio')
+              this.reloadPortfolio()
             } else {
               throw 'Response status is not supported'
             }

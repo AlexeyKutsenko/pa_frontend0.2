@@ -4,6 +4,29 @@
       <b-col>
         <div>
           Index Status:
+          <b-button
+            id="importIndex"
+            variant="light"
+            @click="importIndex"
+          >
+            <b-icon
+              icon="arrow-repeat"
+            />
+          </b-button>
+          <b-tooltip
+            target="importIndex"
+          >
+            Import index from the data source
+          </b-tooltip>
+          <FormComponent
+            :key="selectedIndex"
+            ref="importIndexForm"
+            :embedded="true"
+            :entity-name="'Index'"
+            :entity="indices[selectedIndex]"
+            :method="'PUT'"
+            :request-url="`${indexUrl}/${selectedIndex}/`"
+          />
         </div>
         <b-badge
           class="d-inline"
@@ -67,9 +90,11 @@
 </template>
 <script>
 import {updatingStatuses} from "../../../utils/updatingStatuses";
+import FormComponent from "../../../utils/FormComponent/FormComponent";
 
 export default {
   name: 'IndexStatus',
+  components: {FormComponent},
   props: {
     indices: {
       type: Array,
@@ -111,6 +136,9 @@ export default {
     this.selectBadgeVariant();
   },
   methods: {
+    importIndex: function () {
+      this.$refs.importIndexForm.onSubmitFunction()
+    },
     reloadIndexTickers: function () {
       let reloadUrl = `${this.indexUrl}/${this.selectedIndex}/tickers/`
       let that = this

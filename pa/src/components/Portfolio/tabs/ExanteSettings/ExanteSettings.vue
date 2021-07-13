@@ -1,17 +1,19 @@
 <template>
   <div>
     <b-container>
-      <ExanteSettingsForm
+      <FormComponent
         v-if="exanteSettings"
+        entity-name="Exante Settings"
         :entity="exanteSettings"
-        :method="'PUT'"
+        :method="RequestMethods.PUT"
         :portfolio-id="portfolioId"
         :request-url="String('/exante-settings/') + exanteSettings.id + '/'"
       />
-      <ExanteSettingsForm
+      <FormComponent
         v-else
-        :method="'POST'"
-        :portfolio-id="portfolioId"
+        entity-name="Exante Settings"
+        :entity="{'portfolio': portfolioId}"
+        :method="RequestMethods.POST"
         :request-url="String(/exante-settings/)"
       />
     </b-container>
@@ -20,15 +22,17 @@
 
 <script>
 
-import ExanteSettingsForm from "./ExanteSettingsForm";
+import FormComponent from "../../../utils/FormComponent/FormComponent";
+import {RequestMethods} from "../../../../utils/request_methods";
 
 export default {
   name: 'ExanteSettings',
-  components: {ExanteSettingsForm,},
+  components: {FormComponent},
   props: {
     exanteSettings: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     },
     portfolioId: {
       type: Number,
@@ -36,7 +40,9 @@ export default {
     }
   },
   data: function () {
-    return {}
+    return {
+      RequestMethods: RequestMethods,
+    }
   },
 };
 </script>
