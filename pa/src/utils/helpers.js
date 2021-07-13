@@ -1,15 +1,22 @@
-export function prepare_request_data(form) {
-    let creationData = {};
-    let paramsQuery = {};
+export function parse_options(creationData) {
+    let fieldsInfo = {};
 
-    for (let field of Object.keys(form.fields)) {
-        if (form.fields.hasOwnProperty(field)) {
-            if (form.fields[field]['query_param']) {
-                paramsQuery[field] = form.fields[field].data;
-            } else {
-                creationData[field] = form.fields[field].data;
+    if (creationData['query_params']) {
+        let query_params = creationData['query_params'];
+        delete creationData['query_params'];
+        for (const query_param in query_params) {
+            if (query_params.hasOwnProperty(query_param) && !query_params[query_param]['read_only']) {
+                fieldsInfo[query_param] = query_params[query_param];
+                fieldsInfo[query_param]['query_param'] = true;
             }
         }
     }
-    return {creationData, paramsQuery};
+
+    for (let field of Object.keys(creationData)) {
+        if (creationData.hasOwnProperty(field) && !creationData[field]['read_only']) {
+            fieldsInfo[field] = creationData[field];
+        }
+    }
+
+    return fieldsInfo;
 }

@@ -22,86 +22,10 @@
           v-if="selectedIndex"
           class="align-items-center text-center m-1"
         >
-          <b-container fluid>
-            <b-row>
-              <b-col>
-                <div>
-                  Index Status:
-                </div>
-                <b-badge
-                  v-if="indices[selectedIndex].status === updatingStatuses.successfully_updated"
-                  class="d-inline"
-                  variant="success"
-                >
-                  {{ indices[selectedIndex].status }}
-                </b-badge>
-                <b-badge
-                  v-else-if="indices[selectedIndex].status === updatingStatuses.updating"
-                  class="d-inline"
-                  variant="warning"
-                >
-                  {{ indices[selectedIndex].status }}
-                </b-badge>
-                <b-badge
-                  v-else
-                  class="d-inline"
-                  variant="danger"
-                >
-                  {{ indices[selectedIndex].status }}
-                </b-badge>
-              </b-col>
-              <b-col>
-                Last Updated
-                <div
-                  id="index-tickers-last-updated-date"
-                >
-                  <!-- More than a week -->
-                  <div v-if="(indices[selectedIndex].tickersTimeDelta / (1000*60*60*24*7)) > 1">
-                    {{ Math.floor(indices[selectedIndex].tickersTimeDelta / (1000 * 60 * 60 * 24 * 7)) }} weeks ago
-                  </div>
-                  <!-- More than a day -->
-                  <div v-else-if="((indices[selectedIndex].tickersTimeDelta / (1000*60*60*24)) % 7) > 1">
-                    {{ Math.floor(((indices[selectedIndex].tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7)) }} days ago
-                  </div>
-                  <!-- More than an hour -->
-                  <div v-else-if="((indices[selectedIndex].tickersTimeDelta / (1000*60*60)) % 24) > 1">
-                    {{ Math.floor(((indices[selectedIndex].tickersTimeDelta / (1000 * 60 * 60)) % 24)) }} hours ago
-                  </div>
-                  <!-- More than a minute -->
-                  <div v-else-if="((indices[selectedIndex].tickersTimeDelta / (1000*60)) % 60) > 1">
-                    {{ Math.floor(((indices[selectedIndex].tickersTimeDelta / (1000 * 60)) % 60)) }} minutes ago
-                  </div>
-                  <div v-else>
-                    Less than minute ago
-                  </div>
-                </div>
-                <b-tooltip
-                  target="index-tickers-last-updated-date"
-                >
-                  {{ indices[selectedIndex].tickersLastUpdated }}
-                </b-tooltip>
-              </b-col>
-              <b-col>
-                <span
-                  id="reloadIndexTickers"
-                >
-                  <b-button
-                    variant="outline-secondary"
-                    :disabled="!isIndexUpdatable"
-                    @click="reloadIndexTickers"
-                  >
-                    Reload Tickers Information
-                  </b-button>
-                </span>
-                <b-tooltip
-                  v-if="!isIndexUpdatable"
-                  target="reloadIndexTickers"
-                >
-                  Updated less than an hour ago or currently is updating
-                </b-tooltip>
-              </b-col>
-            </b-row>
-          </b-container>
+          <IndexStatus
+            :indices="indices"
+            :selected-index="selectedIndex"
+          />
         </div>
         <b-form-group
           label="Money"
@@ -173,22 +97,18 @@
 </template>
 
 <script>
-import FormComponent from "../utils/FormComponent";
+import {updatingStatuses} from "../../../utils/updatingStatuses";
+import IndexStatus from "./IndexStatus";
 
 export default {
   name: 'PortfolioAdjusting',
-  components: {FormComponent},
+  components: {IndexStatus},
   props: {
     portfolio: {
       type: Object,
       default: () => {
       }
     },
-    updatingStatuses: {
-      type: Object,
-      default: () => {
-      }
-    }
   },
   data: function () {
     return {
@@ -205,28 +125,22 @@ export default {
       adjustedTickers: [],
       approvedTickers: new Set(),
       indexUrl: '/indices',
-      indices: {},
+      indices: [],
       money: undefined,
       selectableIndices: [],
       selectedIndex: undefined,
       skipped_tickers: [],
       sortBy: 'weight',
+      updatingStatuses: undefined,
     }
   },
   computed: {
-    isIndexUpdatable: function () {
-      if (this.selectedIndex && this.indices[this.selectedIndex]) {
-        let index = this.indices[this.selectedIndex];
-        let updatedMoreThatHourAgo = index.tickersTimeDelta / (1000 * 60 * 60) > 1;
-        return index.status !== this.updatingStatuses.updating && updatedMoreThatHourAgo;
-      }
-      return false
-    },
     finApi: function () {
       return this.$store.getters.finApi
     },
   },
   created() {
+    this.updatingStatuses = updatingStatuses;
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
     this.adjustPortfolioUrl = `${this.portfolioUrl}/adjust/indices/`;
   },
@@ -235,12 +149,12 @@ export default {
       .get(this.indexUrl)
       .then((response) => {
         response.data.results.forEach(index => {
-          this.indices[index.id] = {
+          this.indices.push ({
             source: index.source,
             status: index.status,
             tickersLastUpdated: new Date(index.tickers_last_updated),
             tickersTimeDelta: new Date() - new Date(index.tickers_last_updated)
-          };
+          });
           this.selectableIndices.push({value: index.id, text: index.name})
         })
       })
@@ -280,36 +194,9 @@ export default {
       }
       this.$refs['tickers-table'].refresh();
     },
-    computeIsIndexUpdatableProperty: function () {
-      // Is Index Updatable property doesn't compute automatically need to change this.selectedIndex
-      this.selectedIndex += 1;
-      this.selectedIndex -= 1;
-    },
-    importIndex: function () {
-      this.$refs.importIndexForm.onSubmitFunction()
-    },
     skipTicker: function (tickerId) {
       this.skipped_tickers.push(tickerId)
       this.adjustPortfolio()
-    },
-    reloadIndexTickers: function () {
-      let reloadUrl = `${this.indexUrl}/${this.selectedIndex}/tickers/`
-      this.finApi.put(reloadUrl).then((response) => {
-        let responseStatuses = [200, 202];
-        if (responseStatuses.includes(response.status)) {
-          this.indices[this.selectedIndex].status = this.updatingStatuses.updating;
-          this.indices[this.selectedIndex].tickersLastUpdated = new Date();
-          this.indices[this.selectedIndex].tickersTimeDelta = 0;
-          this.computeIsIndexUpdatableProperty()
-        }
-      }).catch((response) => {
-        if (response.status === 406) {
-          this.indices[this.selectedIndex].status = this.updatingStatuses.updating;
-          this.indices[this.selectedIndex].tickersLastUpdated = new Date();
-          this.indices[this.selectedIndex].tickersTimeDelta = 0;
-          this.computeIsIndexUpdatableProperty()
-        }
-      })
     },
   }
 }

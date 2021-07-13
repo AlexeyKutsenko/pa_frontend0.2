@@ -21,8 +21,9 @@
 </template>
 
 <script>
-import {RequestMethods} from "../../../utils/request_methods";
-import FormComponent from "../../utils/FormComponent";
+
+import FormComponent from "../../../utils/FormComponent/FormComponent";
+import {RequestMethods} from "../../../../utils/request_methods";
 
 export default {
   name: 'ExanteSettings',

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import FormComponent from './FormComponent';
+import FormComponent from './FormComponent/FormComponent';
 import {prepare_request_data} from '@/utils/helpers';
 import {errorMsg, successCreateMsg} from "./msgHelpers";
 

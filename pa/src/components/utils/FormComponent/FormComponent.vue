@@ -72,11 +72,11 @@
   </div>
 </template>
 <script>
-import {prepare_request_data} from '@/utils/helpers';
-import {parse_options} from "@/utils/parser";
-import {Form} from "../../utils/form";
-import {errorMsg, successCreateMsg, successUpdateMsg} from "./msgHelpers";
-import {RequestMethods} from "../../utils/request_methods";
+import {Form} from "./form";
+import {errorMsg, successCreateMsg, successUpdateMsg} from "../msgHelpers";
+import {RequestMethods} from "../../../utils/request_methods";
+import {prepare_request_data} from "./helpers";
+import {parse_options} from "../../../utils/helpers";
 
 export default {
   name: 'FormComponent',

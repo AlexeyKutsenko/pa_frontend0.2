@@ -37,90 +37,13 @@
       </b-col>
     </b-row>
     <!-- Portfolio Status -->
-    <b-row
-      class="align-items-center text-center m-1"
-    >
-      <b-col>
-        <div>
-          Status:
-        </div>
-        <b-badge
-          v-if="portfolio.status === updatingStatuses.successfully_updated"
-          class="d-inline"
-          variant="success"
-        >
-          {{ portfolio.status }}
-        </b-badge>
-        <b-badge
-          v-else-if="portfolio.status === updatingStatuses.updating"
-          class="d-inline"
-          variant="warning"
-        >
-          {{ portfolio.status }}
-        </b-badge>
-        <b-badge
-          v-else
-          class="d-inline"
-          variant="danger"
-        >
-          {{ portfolio.status }}
-        </b-badge>
-      </b-col>
-      <b-col>
-        Last Updated:
-        <div
-          v-if="portfolio.tickersLastUpdated"
-        >
-          <div
-            id="portfolio-tickers-last-updated-date"
-          >
-            <!-- More than a week -->
-            <div v-if="(portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7)) > 1">
-              {{ Math.floor(portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24 * 7)) }} weeks ago
-            </div>
-            <!-- More than a day -->
-            <div v-else-if=" (portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7 > 1 ">
-              {{ Math.floor((portfolio.tickersTimeDelta / (1000 * 60 * 60 * 24)) % 7) }} days ago
-            </div>
-            <!-- More than an hour -->
-            <div v-else-if="(portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24 > 1 ">
-              {{ Math.floor((portfolio.tickersTimeDelta / (1000 * 60 * 60)) % 24) }} hours ago
-            </div>
-            <!-- More than a minute -->
-            <div v-else-if="(portfolio.tickersTimeDelta / (1000 * 60)) % 60 > 1">
-              {{ Math.floor((portfolio.tickersTimeDelta / (1000 * 60)) % 60) }} minutes ago
-            </div>
-            <div v-else>
-              Less than minute ago
-            </div>
-          </div>
-          <b-tooltip
-            target="portfolio-tickers-last-updated-date"
-          >
-            {{ portfolio.tickersLastUpdated }}
-          </b-tooltip>
-        </div>
-      </b-col>
-      <b-col>
-        <span
-          id="reloadPortfolioTickers"
-        >
-          <b-button
-            variant="outline-secondary"
-            :disabled="!isPortfolioUpdatable"
-            @click="reloadPortfolioTickersInformation()"
-          >
-            Reload Tickers Information
-          </b-button>
-        </span>
-        <b-tooltip
-          v-if="!isPortfolioUpdatable"
-          target="reloadPortfolioTickers"
-        >
-          Updated less than an hour ago or currently is updating
-        </b-tooltip>
-      </b-col>
-    </b-row>
+    <PortfolioStatus
+      v-if="portfolio.status"
+      :portfolio-url="portfolioUrl"
+      :status="portfolio.status"
+      :tickers-last-updated="portfolio.tickersLastUpdated"
+      :tickers-time-delta="portfolio.tickersTimeDelta"
+    />
     <b-row>
       <b-col>
         <b-tabs>
@@ -176,7 +99,6 @@
           >
             <PortfolioAdjusting
               :portfolio="portfolio"
-              :updating-statuses="updatingStatuses"
             />
           </b-tab>
           <b-tab
@@ -215,13 +137,14 @@
 </template>
 
 <script>
-import ExanteSettings from "./ExanteSettings/ExanteSettings";
-import PortfolioAdjusting from "./PortfolioAdjusting";
-import PortfolioBreakdowns from "./PortfolioBreakdowns";
-import PortfolioPolicyView from "./PortfolioPolicyView";
-import FormComponent from "../utils/FormComponent";
+import ExanteSettings from "./tabs/ExanteSettings/ExanteSettings";
+import PortfolioAdjusting from "./tabs/PortfolioAdjusting/PortfolioAdjusting";
+import PortfolioBreakdowns from "./tabs/PortfolioBreakdowns";
+import PortfolioPolicyView from "./tabs/PortfolioPolicyView";
+import FormComponent from "../utils/FormComponent/FormComponent";
 import {prepare_request_data} from "@/utils/helpers";
 import {errorMsg, successUpdateMsg} from "../utils/msgHelpers";
+import PortfolioStatus from "./PortfolioStatus";
 
 
 export default {
@@ -231,6 +154,7 @@ export default {
     PortfolioAdjusting,
     PortfolioBreakdowns,
     PortfolioPolicyView,
+    PortfolioStatus,
     FormComponent
   },
   data: function () {
@@ -293,27 +217,18 @@ export default {
         {key: "sector", label: "Sector", sortable: true},
         {key: "industry", label: "Industry", sortable: true},
       ],
+      portfolioUrl: undefined,
       sectorsBreakdown: undefined,
       selectedTicker: undefined,
       totalTickers: undefined,
-      updatingStatuses: undefined,
     };
   },
   computed: {
-    isPortfolioUpdatable: function () {
-      let updatedMoreThanHourAgo = this.portfolio.tickersTimeDelta / (1000 * 60 * 60) > 1;
-      return (this.portfolio.status !== this.updatingStatuses.updating && updatedMoreThanHourAgo);
-    },
     finApi: function () {
       return this.$store.getters.finApi;
     },
   },
   created() {
-    this.updatingStatuses = {
-      successfully_updated: "Successfully Updated",
-      updating: "Updating",
-      update_failed: "Update Failed",
-    };
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
     this.importPortfolioUrl = `${this.portfolioUrl}/import_from_exante/`
 
@@ -381,23 +296,6 @@ export default {
 
           this.portfolio.displayName = this.portfolio.name ? this.portfolio.name : `Portfolio #${this.portfolio.id}`
         });
-    },
-    reloadPortfolioTickersInformation: function () {
-      let reloadUrl = `${this.portfolioUrl}/tickers/`;
-      this.finApi.put(reloadUrl).then((response) => {
-        let responseStatuses = [200, 202];
-        if (responseStatuses.includes(response.status)) {
-          this.portfolio.status = this.updatingStatuses.updating;
-          this.portfolio.tickersLastUpdated = new Date();
-          this.portfolio.tickersTimeDelta = 0;
-        }
-      }).catch((response) => {
-        if (response.status === 406) {
-          this.portfolio.status = this.updatingStatuses.updating;
-          this.portfolio.tickersLastUpdated = new Date();
-          this.portfolio.tickersTimeDelta = 0;
-        }
-      });
     },
     onRowSelected: function (ticker) {
       this.selectedTicker = ticker[0];
