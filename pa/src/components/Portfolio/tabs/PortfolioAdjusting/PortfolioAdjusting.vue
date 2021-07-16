@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import {updatingStatuses} from "../../../utils/updatingStatuses";
+import {updatingStatuses} from "../../../../utils/updatingStatuses";
 import IndexStatus from "./IndexStatus";
 
 export default {

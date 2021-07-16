@@ -73,10 +73,11 @@
 </template>
 <script>
 import {Form} from "./form";
-import {errorMsg, successCreateMsg, successUpdateMsg} from "../msgHelpers";
-import {RequestMethods} from "../../../utils/request_methods";
-import {prepare_request_data} from "./helpers";
-import {parse_options} from "../../../utils/helpers";
+import {errorMsg, successCreateMsg, successUpdateMsg} from "../../../utils/msgHelpers";
+import {RequestMethods} from "../../../utils/requestMethods";
+import {prepareRequestData} from "./prepareRequestData";
+import {parseOptions} from "./parseOptions";
+import {getFinApi} from "../../../api/api";
 
 export default {
   name: 'FormComponent',
@@ -112,13 +113,9 @@ export default {
   },
   data: function () {
     return {
+      finApi: getFinApi(),
       form: null,
       onSubmitFunction: this.defaultOnSubmit,
-    }
-  },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
     }
   },
   watch: {
@@ -143,7 +140,7 @@ export default {
         .options(this.requestUrl)
         .then(response => {
           if (response.data) {
-            let fieldsInfo = parse_options(response.data['actions'][that.method])
+            let fieldsInfo = parseOptions(response.data['actions'][that.method])
             that.form = new Form(fieldsInfo)
 
             if (that.entity) {
@@ -163,7 +160,7 @@ export default {
       this.form.validate()
 
       if (this.form.valid) {
-        let {creationData, paramsQuery} = prepare_request_data(this.form)
+        let {creationData, paramsQuery} = prepareRequestData(this.form)
 
         if (this.method === RequestMethods.PUT) {
           let updateUrl = this.requestUrl

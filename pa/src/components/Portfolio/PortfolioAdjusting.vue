@@ -173,11 +173,10 @@
 </template>
 
 <script>
-import FormComponent from "../utils/FormComponent";
+import {getFinApi} from "../../api/api";
 
 export default {
   name: 'PortfolioAdjusting',
-  components: {FormComponent},
   props: {
     portfolio: {
       type: Object,
@@ -204,6 +203,7 @@ export default {
       ],
       adjustedTickers: [],
       approvedTickers: new Set(),
+      finApi: getFinApi(),
       indexUrl: '/indices',
       indices: {},
       money: undefined,
@@ -221,9 +221,6 @@ export default {
         return index.status !== this.updatingStatuses.updating && updatedMoreThatHourAgo;
       }
       return false
-    },
-    finApi: function () {
-      return this.$store.getters.finApi
     },
   },
   created() {
