@@ -24,6 +24,7 @@
             :embedded="true"
             :entity-name="'Index'"
             :entity="indices[selectedIndex]"
+            :fields-classes="{source: 'd-none'}"
             :method="'PUT'"
             :request-url="`${indexUrl}/${selectedIndex}/`"
           />
@@ -98,7 +99,7 @@ export default {
   components: {FormComponent},
   props: {
     indices: {
-      type: Array,
+      type: Object,
       required: true
     },
     selectedIndex: {

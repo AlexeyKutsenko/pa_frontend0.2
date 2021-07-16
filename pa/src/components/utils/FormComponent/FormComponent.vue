@@ -9,7 +9,7 @@
         v-for="(fieldInfo, fieldName) in form.fields"
         :id="'input-group-' + fieldName"
         :key="fieldName"
-        :class="{'d-none': (fieldInfo.type === 'hidden')}"
+        :class="fieldInfo.classes"
         :label="fieldInfo.label"
         :label-for="'input-' + fieldName"
       >
@@ -94,6 +94,10 @@ export default {
       type: String,
       default: () => 'Unknown Entity'
     },
+    fieldsClasses: {
+      type: Object,
+      default: () => null
+    },
     method: {
       type: String,
       required: true
@@ -141,11 +145,10 @@ export default {
         .then(response => {
           if (response.data) {
             let fieldsInfo = parseOptions(response.data['actions'][that.method])
-            that.form = new Form(fieldsInfo)
-
-            if (that.entity) {
-              that.form.set_defaults(that.entity)
+            for (let field in this.fieldsClasses) {
+              fieldsInfo[field].classes = this.fieldsClasses[field]
             }
+            that.form = new Form(fieldsInfo, that.entity)
           }
         })
     }

@@ -1,4 +1,3 @@
-import axios from 'axios/index'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {getUserApi} from "../api/api";

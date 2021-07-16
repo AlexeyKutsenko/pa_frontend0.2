@@ -5,14 +5,15 @@
         v-if="exanteSettings"
         entity-name="Exante Settings"
         :entity="exanteSettings"
+        :fields-classes="fieldsClasses"
         :method="RequestMethods.PUT"
-        :portfolio-id="portfolioId"
         :request-url="String('/exante-settings/') + exanteSettings.id + '/'"
       />
       <FormComponent
         v-else
         entity-name="Exante Settings"
         :entity="{'portfolio': portfolioId}"
+        :fields-classes="fieldsClasses"
         :method="RequestMethods.POST"
         :request-url="String(/exante-settings/)"
       />
@@ -41,6 +42,9 @@ export default {
   },
   data: function () {
     return {
+      fieldsClasses: {
+        portfolio: 'd-none'
+      },
       RequestMethods: RequestMethods,
     }
   },
