@@ -91,6 +91,7 @@
 <script>
 import {updatingStatuses} from "../../../../utils/updatingStatuses";
 import FormComponent from "../../../utils/FormComponent/FormComponent";
+import {getFinApi} from "../../../../api/api";
 
 export default {
   name: 'IndexStatus',
@@ -109,14 +110,12 @@ export default {
     return {
       badgeVariant: undefined,
       dynamicIndices: undefined,
+      finApi: getFinApi(),
       indexUrl: '/indices',
       updatingStatuses: undefined
     }
   },
   computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
-    },
     isIndexUpdatable: function () {
       if (this.selectedIndex && this.dynamicIndices[this.selectedIndex]) {
         let index = this.dynamicIndices[this.selectedIndex];

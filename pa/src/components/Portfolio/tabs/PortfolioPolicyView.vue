@@ -77,6 +77,8 @@
 </template>
 
 <script>
+import {getFinApi} from "../../../api/api";
+
 export default {
   name: 'PortfolioPolicyView',
   props: {
@@ -93,6 +95,7 @@ export default {
   },
   data: function () {
     return {
+      finApi: getFinApi(),
       portfolioPolicyUrl: undefined,
       assetToEquityMaxRatio: undefined,
       assetToEquityMinRatio: undefined,
@@ -101,11 +104,6 @@ export default {
       minimumAnnualEarningsGrowth: undefined,
       peQuantile: undefined,
     }
-  },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
-    },
   },
   created: function () {
     this.portfolioPolicyUrl = `/portfolio-policies/`

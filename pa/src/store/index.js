@@ -88,14 +88,6 @@ const store = new Vuex.Store({
         username: state => {
             return state.username
         },
-        finApi: state => {
-            return axios.create({
-                baseURL: process.env.VUE_APP_FIN_API_URL,
-                headers: {
-                    'Authorization': 'Token ' + state.token
-                }
-            })
-        }
     }
 })
 

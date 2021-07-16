@@ -48,6 +48,7 @@
 
 <script>
 import CreateButton from "./CreateButton";
+import {getFinApi} from "../../api/api";
 
 export default {
   name: "List",
@@ -61,16 +62,12 @@ export default {
   },
   data: function () {
     return {
+      finApi: getFinApi(),
       items: undefined,
       next: undefined,
       previous: undefined,
       params: new URLSearchParams()
     }
-  },
-  computed: {
-    fin_api: function () {
-      return this.$store.getters.finApi
-    },
   },
   watch: {
     params: function () {
@@ -82,7 +79,7 @@ export default {
   },
   methods: {
     getItems: function () {
-      this.fin_api
+      this.finApi
         .get(this.apiUrl, {
           params: this.params
         })

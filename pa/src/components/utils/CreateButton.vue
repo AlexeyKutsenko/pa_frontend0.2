@@ -24,6 +24,7 @@
 import FormComponent from './FormComponent/FormComponent';
 import {errorMsg, successCreateMsg} from "../../utils/msgHelpers";
 import {prepareRequestData} from "./FormComponent/prepareRequestData";
+import {getFinApi} from "../../api/api";
 
 export default {
   name: "CreateButton",
@@ -35,6 +36,7 @@ export default {
   data: function () {
     return {
       fieldsInfo: {},
+      finApi: getFinApi(),
       form: null,
       errorMsgConfig: {
         title: 'Error',
@@ -42,11 +44,6 @@ export default {
         solid: true
       },
     }
-  },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
-    },
   },
   created: function () {
     this.errorMsg = errorMsg

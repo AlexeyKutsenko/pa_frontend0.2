@@ -145,6 +145,7 @@ import FormComponent from "../utils/FormComponent/FormComponent";
 import {errorMsg, successUpdateMsg} from "../../utils/msgHelpers";
 import PortfolioStatus from "./PortfolioStatus";
 import {prepareRequestData} from "../utils/FormComponent/prepareRequestData";
+import {getFinApi} from "../../api/api";
 
 
 export default {
@@ -159,6 +160,7 @@ export default {
   },
   data: function () {
     return {
+      finApi: getFinApi(),
       importPortfolioUrl: undefined,
       indicatorsViewFields: [
         {
@@ -222,11 +224,6 @@ export default {
       selectedTicker: undefined,
       totalTickers: undefined,
     };
-  },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi;
-    },
   },
   created() {
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;

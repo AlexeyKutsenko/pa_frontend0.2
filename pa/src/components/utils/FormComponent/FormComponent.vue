@@ -77,6 +77,7 @@ import {errorMsg, successCreateMsg, successUpdateMsg} from "../../../utils/msgHe
 import {RequestMethods} from "../../../utils/requestMethods";
 import {prepareRequestData} from "./prepareRequestData";
 import {parseOptions} from "./parseOptions";
+import {getFinApi} from "../../../api/api";
 
 export default {
   name: 'FormComponent',
@@ -112,13 +113,9 @@ export default {
   },
   data: function () {
     return {
+      finApi: getFinApi(),
       form: null,
       onSubmitFunction: this.defaultOnSubmit,
-    }
-  },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
     }
   },
   watch: {

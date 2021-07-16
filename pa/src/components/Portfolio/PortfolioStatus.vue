@@ -87,6 +87,7 @@
 
 <script>
 import {updatingStatuses} from "../../utils/updatingStatuses";
+import {getFinApi} from "../../api/api";
 
 export default {
   name: "PortfolioStatus",
@@ -113,13 +114,11 @@ export default {
       dynamicStatus: undefined,
       dynamicTickersLastUpdated: undefined,
       dynamicTickersTimeDelta: undefined,
+      finApi: getFinApi(),
       updatingStatuses: undefined
     }
   },
   computed: {
-    finApi: function () {
-      return this.$store.getters.finApi;
-    },
     isPortfolioUpdatable: function () {
       let updatedMoreThanHourAgo = this.dynamicTickersTimeDelta / (1000 * 60 * 60) > 1;
       return (this.dynamicStatus !== this.updatingStatuses.updating && updatedMoreThanHourAgo);
