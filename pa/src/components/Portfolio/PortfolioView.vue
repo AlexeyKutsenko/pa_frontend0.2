@@ -142,9 +142,9 @@ import PortfolioAdjusting from "./tabs/PortfolioAdjusting/PortfolioAdjusting";
 import PortfolioBreakdowns from "./tabs/PortfolioBreakdowns";
 import PortfolioPolicyView from "./tabs/PortfolioPolicyView";
 import FormComponent from "../utils/FormComponent/FormComponent";
-import {prepare_request_data} from "@/utils/helpers";
-import {errorMsg, successUpdateMsg} from "../utils/msgHelpers";
+import {errorMsg, successUpdateMsg} from "../../utils/msgHelpers";
 import PortfolioStatus from "./PortfolioStatus";
+import {prepareRequestData} from "../utils/FormComponent/prepareRequestData";
 
 
 export default {
@@ -260,7 +260,7 @@ export default {
       form.validate()
 
       if (form.valid) {
-        let {creationData, paramsQuery} = prepare_request_data(form)
+        let {creationData, paramsQuery} = prepareRequestData(form)
 
         this.finApi
           .put(this.importPortfolioUrl, creationData, {params: paramsQuery})

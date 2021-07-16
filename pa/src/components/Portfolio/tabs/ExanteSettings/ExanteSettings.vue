@@ -23,7 +23,7 @@
 <script>
 
 import FormComponent from "../../../utils/FormComponent/FormComponent";
-import {RequestMethods} from "../../../../utils/request_methods";
+import {RequestMethods} from "../../../../utils/requestMethods";
 
 export default {
   name: 'ExanteSettings',

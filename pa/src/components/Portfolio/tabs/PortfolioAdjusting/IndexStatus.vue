@@ -89,7 +89,7 @@
   </b-container>
 </template>
 <script>
-import {updatingStatuses} from "../../../utils/updatingStatuses";
+import {updatingStatuses} from "../../../../utils/updatingStatuses";
 import FormComponent from "../../../utils/FormComponent/FormComponent";
 
 export default {

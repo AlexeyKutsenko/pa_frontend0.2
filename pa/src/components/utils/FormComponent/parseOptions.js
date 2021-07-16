@@ -1,4 +1,4 @@
-export function parse_options(creationData) {
+export function parseOptions(creationData) {
     let fieldsInfo = {};
 
     if (creationData['query_params']) {

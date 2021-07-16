@@ -22,8 +22,8 @@
 
 <script>
 import FormComponent from './FormComponent/FormComponent';
-import {prepare_request_data} from '@/utils/helpers';
-import {errorMsg, successCreateMsg} from "./msgHelpers";
+import {errorMsg, successCreateMsg} from "../../utils/msgHelpers";
+import {prepareRequestData} from "./FormComponent/prepareRequestData";
 
 export default {
   name: "CreateButton",
@@ -58,7 +58,7 @@ export default {
       form.validate();
 
       if (form.valid) {
-        let {creationData, paramsQuery} = prepare_request_data(form);
+        let {creationData, paramsQuery} = prepareRequestData(form);
 
         this.finApi
           .post(this.apiUrl, creationData, {params: paramsQuery})
