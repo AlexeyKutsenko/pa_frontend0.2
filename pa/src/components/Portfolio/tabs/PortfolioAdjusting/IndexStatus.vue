@@ -24,6 +24,7 @@
             :embedded="true"
             :entity-name="'Index'"
             :entity="indices[selectedIndex]"
+            :fields-classes="{source: 'd-none'}"
             :method="'PUT'"
             :request-url="`${indexUrl}/${selectedIndex}/`"
           />
@@ -89,15 +90,16 @@
   </b-container>
 </template>
 <script>
-import {updatingStatuses} from "../../../utils/updatingStatuses";
+import {updatingStatuses} from "../../../../utils/updatingStatuses";
 import FormComponent from "../../../utils/FormComponent/FormComponent";
+import {getFinApi} from "../../../../api/api";
 
 export default {
   name: 'IndexStatus',
   components: {FormComponent},
   props: {
     indices: {
-      type: Array,
+      type: Object,
       required: true
     },
     selectedIndex: {
@@ -109,14 +111,12 @@ export default {
     return {
       badgeVariant: undefined,
       dynamicIndices: undefined,
+      finApi: getFinApi(),
       indexUrl: '/indices',
       updatingStatuses: undefined
     }
   },
   computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
-    },
     isIndexUpdatable: function () {
       if (this.selectedIndex && this.dynamicIndices[this.selectedIndex]) {
         let index = this.dynamicIndices[this.selectedIndex];

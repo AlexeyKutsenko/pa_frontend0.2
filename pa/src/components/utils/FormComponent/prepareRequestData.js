@@ -1,4 +1,4 @@
-export function prepare_request_data(form) {
+export function prepareRequestData(form) {
     let creationData = {};
     let paramsQuery = {};
 

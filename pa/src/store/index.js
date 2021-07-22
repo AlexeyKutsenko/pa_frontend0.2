@@ -1,6 +1,6 @@
-import axios from 'axios/index'
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {getUserApi} from "../api/api";
 
 Vue.use(Vuex)
 
@@ -29,9 +29,11 @@ const store = new Vuex.Store({
         },
     },
     actions: {
+        // eslint-disable-next-line no-unused-vars
         login({commit, getters}, user_info) {
             return new Promise((resolve, reject) => {
-                getters.users_api.post('/login/', {
+                let userApi = getUserApi();
+                userApi.post('/login/', {
                     'username': user_info.username,
                     'password': user_info.password
                 })
@@ -45,9 +47,11 @@ const store = new Vuex.Store({
                     })
             })
         },
+        // eslint-disable-next-line no-unused-vars
         registration({commit, getters}, user_info) {
             return new Promise((resolve, reject) => {
-                getters.users_api.post('/registration/', {
+                let userApi = getUserApi()
+                userApi.post('/registration/', {
                     'username': user_info.username,
                     'email': user_info.email,
                     'password1': user_info.password,
@@ -83,24 +87,6 @@ const store = new Vuex.Store({
         username: state => {
             return state.username
         },
-        users_api: state => {
-            let headers = {}
-            if (state.token) {
-                headers = {'Authorization': 'Token ' + state.token}
-            }
-            return axios.create({
-                baseURL: process.env.VUE_APP_USERS_API_URL,
-                headers: headers
-            })
-        },
-        finApi: state => {
-            return axios.create({
-                baseURL: process.env.VUE_APP_FIN_API_URL,
-                headers: {
-                    'Authorization': 'Token ' + state.token
-                }
-            })
-        }
     }
 })
 

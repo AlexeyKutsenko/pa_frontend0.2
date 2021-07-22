@@ -97,8 +97,9 @@
 </template>
 
 <script>
-import {updatingStatuses} from "../../../utils/updatingStatuses";
+import {updatingStatuses} from "../../../../utils/updatingStatuses";
 import IndexStatus from "./IndexStatus";
+import {getFinApi} from "../../../../api/api";
 
 export default {
   name: 'PortfolioAdjusting',
@@ -124,8 +125,9 @@ export default {
       ],
       adjustedTickers: [],
       approvedTickers: new Set(),
+      finApi: getFinApi(),
       indexUrl: '/indices',
-      indices: [],
+      indices: {},
       money: undefined,
       selectableIndices: [],
       selectedIndex: undefined,
@@ -133,11 +135,6 @@ export default {
       sortBy: 'weight',
       updatingStatuses: undefined,
     }
-  },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi
-    },
   },
   created() {
     this.updatingStatuses = updatingStatuses;
@@ -149,12 +146,12 @@ export default {
       .get(this.indexUrl)
       .then((response) => {
         response.data.results.forEach(index => {
-          this.indices.push ({
+          this.indices[index.id] = {
             source: index.source,
             status: index.status,
             tickersLastUpdated: new Date(index.tickers_last_updated),
             tickersTimeDelta: new Date() - new Date(index.tickers_last_updated)
-          });
+          };
           this.selectableIndices.push({value: index.id, text: index.name})
         })
       })

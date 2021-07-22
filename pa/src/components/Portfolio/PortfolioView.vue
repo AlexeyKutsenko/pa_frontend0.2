@@ -142,9 +142,10 @@ import PortfolioAdjusting from "./tabs/PortfolioAdjusting/PortfolioAdjusting";
 import PortfolioBreakdowns from "./tabs/PortfolioBreakdowns";
 import PortfolioPolicyView from "./tabs/PortfolioPolicyView";
 import FormComponent from "../utils/FormComponent/FormComponent";
-import {prepare_request_data} from "@/utils/helpers";
-import {errorMsg, successUpdateMsg} from "../utils/msgHelpers";
+import {errorMsg, successUpdateMsg} from "../../utils/msgHelpers";
 import PortfolioStatus from "./PortfolioStatus";
+import {prepareRequestData} from "../utils/FormComponent/prepareRequestData";
+import {getFinApi} from "../../api/api";
 
 
 export default {
@@ -159,6 +160,7 @@ export default {
   },
   data: function () {
     return {
+      finApi: getFinApi(),
       importPortfolioUrl: undefined,
       indicatorsViewFields: [
         {
@@ -223,11 +225,6 @@ export default {
       totalTickers: undefined,
     };
   },
-  computed: {
-    finApi: function () {
-      return this.$store.getters.finApi;
-    },
-  },
   created() {
     this.portfolioUrl = `/portfolios/${this.$route.params.id}`;
     this.importPortfolioUrl = `${this.portfolioUrl}/import_from_exante/`
@@ -260,7 +257,7 @@ export default {
       form.validate()
 
       if (form.valid) {
-        let {creationData, paramsQuery} = prepare_request_data(form)
+        let {creationData, paramsQuery} = prepareRequestData(form)
 
         this.finApi
           .put(this.importPortfolioUrl, creationData, {params: paramsQuery})
