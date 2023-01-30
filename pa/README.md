@@ -1,3 +1,4 @@
+# Keeping for an example of Vue.js project
 # pa
 
 ## Project setup
